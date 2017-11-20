@@ -7,8 +7,7 @@
 <head>
     <title>Analogue Events</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" media="all"
-          href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -18,20 +17,26 @@ section of that file (e.g. tag like a header)  You can also pass in parameters t
 
     </div>
 
-    <table>
-        <tr>
-            <td> Event ID</td>
-            <td> Event Channel ID</td>
-            <td> Event Date</td>
-        </tr>
-        <th:block th:each="event : ${events}">
-            <tr>
-                <td th:text= "${event.id}">id ...</td>
-                <td th:text="${event.channel.id}">channel ...</td>
-                <td th:text="${event.date}">date ...</td>
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr class="row">
+                <td class="col-sm-4"> Event ID</td>
+                <td class="col-sm-4"> Event Channel ID</td>
+                <td class="col-sm-4"> Event Date</td>
             </tr>
-        </th:block>
-    </table>
+            </thead>
+            <tbody>
+            <th:block th:each="event : ${events}">
+                <tr class="row">
+                    <td class="col-sm-4" th:text= "${event.id}">id ...</td>
+                    <td class="col-sm-4" th:text="${event.channel.id}">channel ...</td>
+                    <td class="col-sm-4" th:text="${event.date}">date ...</td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
 
     <form action="#" th:action="@{'/reports'}" th:method="GET" >
         <input type="submit" id="submitButton" value="Create a Report!"> </input>
