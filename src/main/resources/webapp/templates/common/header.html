@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<!-- Define thymeleaf as th. Then to use it, type in th:-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header (title)" id="header">
+    <p th:text="${title}"> This is the header for page </p>
+</header>
+</body>
+</html>

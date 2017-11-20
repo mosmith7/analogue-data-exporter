@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Controller
-@RequestMapping(path="/controller")
+@RequestMapping(path="/events")
 public class MainController {
 
     @Autowired
@@ -18,5 +22,12 @@ public class MainController {
     AnalogueEvent getEvent(@PathVariable("id") final Integer id) {
         AnalogueEvent analogueEvent = eventAnalogueRepository.findOne(id);
         return analogueEvent;
+    }
+
+    @GetMapping(path="")
+    public @ResponseBody
+    Iterable<AnalogueEvent> getEvents() {
+        List<Integer> eventIds = Arrays.asList(685144355, 685144356, 685144353);
+        return eventAnalogueRepository.findAll(eventIds);
     }
 }

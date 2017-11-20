@@ -31,8 +31,8 @@ public class Channel {
     private boolean archived = false;
 
     @Column(name = "channel_type", nullable = false)
+    // Point hibernate to a converter class so it knows how to convert from SQL varchar to ChannelType
     @Convert(converter = ChannelTypeConverter.class)
-//    @Enumerated(EnumType.STRING)
     private ChannelType channelType;
 
     protected Channel()

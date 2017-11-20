@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<footer>
+    <p> This footer will warn you if you are using an unsupported web browser</p>
+    <th:block th:fragment="scripts" th:with="env=${@environment}">
+
+        <!--<script th:src="@{/resources/swf/swfobject/swfobject.js}"></script>-->
+    </th:block>
+
+    <th:block th:fragment="browser-warning">
+        <!--[if lt IE 9]>
+        <div class="ie-warning">
+            <h1 class="c-white">Unsupported web browser</h1>
+
+            <p>
+                You are using an outdated version of Internet Explorer, please read the following article <br/>
+                <a href="https://confluence.tracsis.com/display/CD/Browser+Compatibility+Notice">https://confluence.tracsis.com/display/CD/Browser+Compatibility+Notice</a>
+            </p>
+        </div>
+        <![endif]-->
+    </th:block>
+</footer>
+
+</html>
