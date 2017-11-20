@@ -39,7 +39,6 @@ public class Channel {
     {
     }
 
-
     public Integer getId() {
         return id;
     }
