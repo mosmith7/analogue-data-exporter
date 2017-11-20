@@ -30,11 +30,15 @@ public class Channel {
     @Column(nullable = false)
     private boolean archived = false;
 
-    @Column(name = "channel_type", nullable = false, insertable = false, updatable = false)
+    @Column(name = "channel_type", nullable = false)
+    @Convert(converter = ChannelTypeConverter.class)
+//    @Enumerated(EnumType.STRING)
     private ChannelType channelType;
 
-    public Channel() {
+    protected Channel()
+    {
     }
+
 
     public Integer getId() {
         return id;

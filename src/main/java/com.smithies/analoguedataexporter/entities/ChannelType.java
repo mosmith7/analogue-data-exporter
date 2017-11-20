@@ -1,5 +1,6 @@
 package com.smithies.analoguedataexporter.entities;
 
+
 public enum ChannelType
 {
     ANALOGUE("A"),

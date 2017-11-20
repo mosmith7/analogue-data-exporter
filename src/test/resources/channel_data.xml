@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+    <channel channel_type="D" id="1" name="channel1" interlocking="1" archived="0" internal="0"/>
+    <channel channel_type="D" id="2" name="channel2" interlocking="2" archived="0" internal="0"/>
+    <channel channel_type="D" id="3" name="channel3" interlocking="3" archived="0" internal="0"/>
+    <channel channel_type="D" id="4" name="channel4" interlocking="4" archived="0" internal="0"/>
+</dataset>

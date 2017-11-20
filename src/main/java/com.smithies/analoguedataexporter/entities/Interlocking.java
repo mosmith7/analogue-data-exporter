@@ -33,18 +33,6 @@ public class Interlocking {
     @Size(max = 10000)
     private String engineerDetails;
 
-    @javax.validation.constraints.NotNull
-    private TimeZone timeZone = TimeZone.getDefault();
-
-    @Column(nullable = false)
-    private boolean adjustForDaylightSavings = true;
-
-    @Column(nullable = false)
-    private boolean inUse = true;
-
-    @Column(nullable = false)
-    private Long dateDisabled = 0L;
-
     // Do not use @JoinColumn as this is already defined on the Channel object
     @OneToMany(mappedBy = "interlocking")
     private List<Channel> channels = new ArrayList<>();
@@ -106,38 +94,6 @@ public class Interlocking {
 
     public void setEngineerDetails(String engineerDetails) {
         this.engineerDetails = engineerDetails;
-    }
-
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
-    }
-
-    public boolean isAdjustForDaylightSavings() {
-        return adjustForDaylightSavings;
-    }
-
-    public void setAdjustForDaylightSavings(boolean adjustForDaylightSavings) {
-        this.adjustForDaylightSavings = adjustForDaylightSavings;
-    }
-
-    public boolean isInUse() {
-        return inUse;
-    }
-
-    public void setInUse(boolean inUse) {
-        this.inUse = inUse;
-    }
-
-    public Long getDateDisabled() {
-        return dateDisabled;
-    }
-
-    public void setDateDisabled(Long dateDisabled) {
-        this.dateDisabled = dateDisabled;
     }
 
     public List<Channel> getChannels() {
