@@ -5,26 +5,25 @@
       th:lang-xmllang="en">
 
 <head>
-    <title>Analogue Events</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" media="all"
-          href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />
+    <!-- th:replace argument tells thymeleaf the location of the code to insert here by giving it the file and
+section of that file (e.g. tag like a header)  You can also pass in parameters to this section of code being referenced. -->
+    <div th:replace = "common/head :: head (title='Reports')"></div>
+
+    <!--<title>Analogue Events</title>-->
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />-->
+    <!--<link rel="stylesheet" type="text/css" media="all"-->
+          <!--href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />-->
 </head>
 
 <body>
-<!-- th:replace argument tells thymeleaf the location of the code to insert here by giving it the file and
-section of that file (e.g. tag like a header)  You can also pass in parameters to this section of code being referenced. -->
-<div th:replace = "common/header :: header (title='Reports')">
 
-</div>
+    <div th:replace = "common/header :: header (title='Raw Analogue Events')"> </div>
 
-<form action="#" th:action="@{'/analogue-events'}" th:method="GET" >
-    <input type="submit" id="submitButton" value="See some Events!"> </input>
-</form>
+    <form action="#" th:action="@{'/analogue-events'}" th:method="GET" >
+        <input type="submit" id="submitButton" value="See some Events!"> </input>
+    </form>
 
-<div th:replace = "common/footer :: footer">
-
-</div>
+    <div th:replace = "common/footer :: footer"></div>
 </body>
 
 </html>

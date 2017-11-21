@@ -5,17 +5,13 @@
       th:lang-xmllang="en">
 
 <head>
-    <title>Analogue Events</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <div th:replace = "common/head :: head (title='Analogue Events')"> </div>
 </head>
 
 <body>
 <!-- th:replace argument tells thymeleaf the location of the code to insert here by giving it the file and
 section of that file (e.g. tag like a header)  You can also pass in parameters to this section of code being referenced. -->
-    <div th:replace = "common/header :: header (title='Analogue Events')">
-
-    </div>
+    <div th:replace = "common/header :: header (title='Analogue Events')"> </div>
 
     <div class="container">
         <table class="table">

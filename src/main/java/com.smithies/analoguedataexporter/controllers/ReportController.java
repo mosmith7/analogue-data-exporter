@@ -10,8 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ReportController {
 
     @GetMapping()
-    public String index(Model model)
+    public String getReports(Model model)
     {
         return "reports/index";
+    }
+
+    @GetMapping(path="raw-analogue-events")
+    public String getRawDigitalEvents(Model model)
+    {
+        return "reports/raw-analogue-events";
     }
 }
