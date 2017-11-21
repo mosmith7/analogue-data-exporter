@@ -5,19 +5,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Controller
 @RequestMapping(path="analogue-events")
 public class AnalogueEventController {
 
     @Autowired
-    private MainController mainController;
+    private EventsController eventsController;
 
     @GetMapping()
     public String index(Model model)
     {
-        model.addAttribute("events", mainController.getEvents());
+        model.addAttribute("events", eventsController.getEvents());
         return "analogue_events/index";
     }
 }

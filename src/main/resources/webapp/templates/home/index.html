@@ -23,7 +23,11 @@
         <p> Welcome to this microsite! </p>
 
         <form action="#" th:action="@{'/reports/raw-analogue-events'}" th:method="GET" >
-            <input type="submit" id="submitButton" value="Analogue Reports!"> </input>
+            <input type="submit" id="goToReports" value="Analogue Reports!"> </input>
+        </form>
+
+        <form action="#" th:action="@{'/analogue-events'}" th:method="GET" >
+            <input type="submit" id="goToEvents" value="View Example Events!"> </input>
         </form>
 
         <div th:replace = "common/footer :: footer"></div>

@@ -4,97 +4,48 @@
       xmlns:th="http://www.thymeleaf.org"
       th:lang-xmllang="en">
 
-<head>
-    <div th:replace = "common/head :: head (title='Raw Analogue Events')"> </div>
-</head>
+    <head>
+        <div th:replace = "common/head :: head (title='Raw Analogue Events')"> </div>
+    </head>
 
-<body>
+    <body>
 
-    <section id="breadcrumbs">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active">
-                <a href="#/raw-analogue-events/{{currentParameters.id ?  currentParameters.id : ''}}">Raw Analogue Events</a>
-            </li>
-        </ol>
-    </section>
+        <section id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">
+                    <a href="#/raw-analogue-events/{{currentParameters.id ?  currentParameters.id : ''}}">Raw Analogue Events</a>
+                </li>
+            </ol>
+        </section>
 
-    <div th:replace = "common/header :: header (title='Raw Analogue Events')"> </div>
+        <div th:replace = "common/header :: header (title='Raw Analogue Events')"> </div>
 
-    <div class="container" id="content">
-        <div class="row">
-            <!--Recent Reports-->
-            <div class="col-md-12 col-lg-8 col-lg-push-4">
-                <cx-recent-report-list recent-reports-promise="recentReportsPromise"
-                                       report-name = "'Raw Digital Events'"
-                                       report-path = "'raw-digital-events'" />
-            </div>
 
-            <!--Report Config-->
-            <div class="col-md-12 col-lg-4 col-lg-pull-8">
-                <div class="card">
-                    <div class="card-header ch-alt m-b-0">
-                        <h2><i class="fa fa-book"></i>&nbsp; Raw Analogue Events Report</h2>
+        <form action="#" action="/reports/raw-analogue-events" method="post">
+            <div class="container">
+                <div class="row">
+                    <label>Site:</label><input class="col-ms-6" type="text" name="site" id="site" value="Kings Cross">
+                    <label>Channel:</label><input class="col-ms-6" type="text" value = "" name="channel">
+                </div>
+                <div class="row">
+                    <label>From:</label><input class="col-ms-6" type="date" value = "" name="from">
+                    <label>To:</label> <input  class="col-ms-6" type="date" value = "" name="to">
+                </div>
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3 col-xs-6  form-group">
+                        <button type="submit" class="btn btn-success">Generate Report</button>
                     </div>
-                    <div class="card-body card-padding">
-
-                        <!--Site Selector-->
-                        <div class="row m-b-5">
-                            <div class="col-sm-12">
-                                <p class="f-500 c-black m-b-5">Select Site</p>
-                                <div class="m-b-0">
-                                    <cx-site-typeahead selected-site="selectedSite"></cx-site-typeahead>
-                                </div>
-                            </div>
-                        </div>
-
-                        <cx-report-date-select cx-time-range="timeRange" cx-allow-hour></cx-report-date-select>
-
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-12 m-b-5">
-                                <cx-report-transition-select up-dn="upDn"></cx-report-transition-select>
-                            </div>
-                            <div class="col-sm-6 col-lg-12 m-b-0">
-                                <cx-report-state-select state-events="stateEvents"></cx-report-state-select>
-                            </div>
-                        </div>
+                    <div class="col-md-3 col-md-offset-9 col-xs-6  form-group">
+                        <button type="reset" class="btn btn-primary">Reset From</button>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header ch-alt m-b-0">
-                        <h2><i class="fa fa-code-fork"></i>&nbsp; Select channels</h2>
-                    </div>
-                    <div class="card-body card-padding" cx-load-mask="loadingDips">
-                        <div class="row" style="position:relative">
-                            <div class="form-group m-b-5 col-md-6">
-                                <cx-channel-select cx-items="channels" cx-ticked-items="selectedChannels"
-                                                   cx-show-tr="true" cx-no-spares="true"/>
-                            </div>
-                            <div class="form-group m-b-5 col-md-6 vertical-container-right">
-                                <p class="f-500 c-black m-b-5">Channels in Report</p>
-                                <cx-channel-selected cx-items="channels" cx-ticked-items="selectedChannels"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3 col-md-offset-9 col-xs-12">
-                                <button type="submit" class="btn btn-success" style="width:100%; bottom: 0"
-                                        ng-click="onSubmit()">Run Report
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- TODO: Why is this footer not having the background colour applied?-->
+        <div th:replace = "common/footer :: footer"></div>
 
-    <div th:replace = "common/footer :: footer"></div>
-
-</body>
+    </body>
 
 </html>

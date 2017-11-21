@@ -6,12 +6,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title th:text="${title}"> This is the title for page </title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!-- I can't get this to link to the right file-->
-    <!--<link rel="stylesheet" type="text/css" href="/webapp/css/site.css">-->
-    <style>
-        .site-footer {
-            background: lightblue;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" th:href="@{css/site.css}">
 </head>
 </html>

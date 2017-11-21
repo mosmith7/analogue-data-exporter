@@ -9,9 +9,15 @@
 </head>
 
 <body>
-<!-- th:replace argument tells thymeleaf the location of the code to insert here by giving it the file and
-section of that file (e.g. tag like a header)  You can also pass in parameters to this section of code being referenced. -->
     <div th:replace = "common/header :: header (title='Analogue Events')"> </div>
+
+    <section id="breadcrumbs">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Example Events
+            </li>
+        </ol>
+    </section>
 
     <div class="container">
         <table class="table">
@@ -33,10 +39,6 @@ section of that file (e.g. tag like a header)  You can also pass in parameters t
             </tbody>
         </table>
     </div>
-
-    <form action="#" th:action="@{'/reports'}" th:method="GET" >
-        <input type="submit" id="submitButton" value="Create a Report!"> </input>
-    </form>
 
     <div th:replace = "common/footer :: footer">
 
