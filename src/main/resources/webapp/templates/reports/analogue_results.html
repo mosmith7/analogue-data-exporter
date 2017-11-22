@@ -1,0 +1,52 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      th:lang-xmllang="en">
+
+    <head>
+        <div th:replace = "common/head :: head (title='Report Results')"> </div>
+    </head>
+
+    <body>
+
+        <section id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">
+                    <a href="/reports/raw-analogue-events/{{currentParameters.id ?  currentParameters.id : ''}}">Raw Analogue Events</a>
+                </li>
+                <li class="breadcrumb-item">Report Results</li>
+            </ol>
+        </section>
+
+        <div th:replace = "common/header :: header (title='Report Results')"> </div>
+
+        <div class = "container">
+            <div class = "row">
+                <form id="form" action="#" action="/reports/raw-analogue-events" method="post">
+                    <div class="col-md-3 col-md-offset-3 col-xs-3 form-group">
+                        <button type="submit" class="btn btn-success">Edit Parameters</button>
+                    </div>
+                    <input type="hidden" th:value="${site}" th:attr="name='site'">
+                    <input type="hidden" th:value="${channel}" th:attr="name='channel'">
+                    <input type="hidden" th:value="${from}" th:attr="name='from'">
+                    <input type="hidden" th:value="${to}" th:attr="name='to'">
+                </form>
+            </div>
+            <div class="row">
+                <p class="col-md-3 col-md-offset-2">Selected Site:</p><p id="selectedSite" class="col-md-3 col-md-offset-6" th:text="${site}"></p>
+                <p class="col-md-3 col-md-offset-2">Selected Channel:</p><p id="selectedChannel" class="col-md-3 col-md-offset-6" th:text="${channel}"></p>
+                <p class="col-md-3 col-md-offset-2">Selected From:</p><p id="selectedFrom" class="col-md-3 col-md-offset-6" th:text="${dateFrom}"></p>
+                <p class="col-md-3 col-md-offset-2">Selected To:</p><p id="selectedTo" class="col-md-3 col-md-offset-6" th:text="${dateTo}"></p>
+            </div>
+
+        </div>
+
+
+        <div th:replace = "common/footer :: footer"></div>
+
+
+    </body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      th:lang-xmllang="en">
+
+    <head>
+        <div th:replace = "common/head :: head (title='Raw Analogue Events')"> </div>
+        <script type = "text/javascript"
+                src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    </head>
+
+    <body>
+
+        <section id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">
+                    <a href="/reports/raw-analogue-events/{{currentParameters.id ?  currentParameters.id : ''}}">Raw Analogue Events</a>
+                </li>
+            </ol>
+        </section>
+
+        <div th:replace = "common/header :: header (title='Raw Analogue Events')"> </div>
+
+
+        <form id="form" action="#" action="/reports/raw-analogue-events/parameters" method="post">
+            <div class="container">
+                <div class="row">
+                    <label>Site:</label>
+                    <select id="siteSelect" name="site">
+                        <option value="" selected="selected">--Select a Site--</option>
+                        <option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
+                    </select>
+                    <label>Channel:</label>
+                    <select id="channelSelect" name="channel">
+                        <option value="" selected="selected"></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label>From:</label><input id="fromSelect" class="col-ms-6" type="date" value = "" name="from">
+                    <label>To:</label> <input  id="toSelect" class="col-ms-6" type="date" value = "" name="to">
+                </div>
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3 col-xs-3  form-group">
+                        <button type="submit" class="btn btn-success">Generate Report</button>
+                    </div>
+                    <div class="col-md-3 col-md-offset-9 col-xs-3  form-group">
+                        <button type="reset" class="btn btn-primary">Reset From</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div th:replace = "common/footer :: footer"></div>
+
+        <script th:inline="javascript">
+            // When the user selects a site, change the channel select options to match that site
+            $("#siteSelect").change(function() {
+                var siteId = $("#siteSelect").val()
+                if (siteId===""){
+                    $("#channelSelect").find('option').remove().end();
+                } else {
+                    populateChannelSelect(siteId)
+                }
+            });
+
+            // Check all fields filled in before submitted the form
+            $("#form").submit(function(event) {
+                if ($("#siteSelect").val()==="") {
+                    event.preventDefault();
+                    alert("Please select a site")
+                } else if ($("#channelSelect").val()==="") {
+                    event.preventDefault();
+                    alert("Please select a channel")
+                } else if ($("#fromSelect").val()==="") {
+                    event.preventDefault();
+                    alert("Please select a date from value")
+                } else if ($("#toSelect").val()==="") {
+                    event.preventDefault();
+                    alert("Please select a date to value")
+                }
+            })
+
+            // Use thymeleaf script inlining (<script th:inline="javascript">) to be able to access model attributes in javascript
+            /*<![CDATA[*/
+            // If model attributes exist in memory, populate the values on page load
+            $(document).ready(function() {
+                var site = [[${site}]]
+                if (site != "") {
+                    console.log($("#siteSelect option[value='[[${site}]]']"))
+                    $("#siteSelect option[value='[[${site}]]']").attr("selected", true)
+                }
+                if (site!=null) {
+                    if ([[${channel}]] !="") {
+                        populateChannelSelectAndSelected(site)
+                    } else {
+                        populateChannelSelect(site)
+                    }
+                }
+                if ([[${from}]] != "") {
+                    document.querySelector('#fromSelect').value = [[${from}]]
+                }
+                if ([[${to}]] != "") {
+                    document.querySelector('#toSelect').value = [[${to}]]
+                }
+            })
+
+            function popoulateSiteSelect() {
+                $.get("/sites", function(sites) {
+                    var option = ''
+                    option += '<option value="" selected="selected">--Select a Site--</option>'
+                    for (var i=0; i<sites.length;i++) {
+                        option += '<option value="' + sites[i].id + '" text="' + sites[i].name + '">' + sites[i].name + '</option>';
+                    }
+                    $("#siteSelect").find('option').remove().end().append(option);
+                })
+            }
+
+            function populateChannelSelect(siteId) {
+                $.get("/channels/site/"+siteId, function(channels) {
+                    var option = ''
+                    for (var i=0; i<channels.length;i++) {
+                        option += '<option value="' + channels[i].id + '" text="' + channels[i].name + '">' + channels[i].name + '</option>';
+                    }
+                    $("#channelSelect").find('option').remove().end().append(option);
+                })
+            }
+
+            function populateChannelSelectAndSelected(siteId) {
+                $.get("/channels/site/"+siteId, function(channels) {
+                    var option = ''
+                    for (var i=0; i<channels.length;i++) {
+                        option += '<option value="' + channels[i].id + '" text="' + channels[i].name + '">' + channels[i].name + '</option>';
+                    }
+                    $("#channelSelect").find('option').remove().end().append(option);
+                    // Now, still within the asynchronous callback, select the channel that was selected
+                    console.log([[${channel}]])
+                    $("#channelSelect option[value='[[${channel}]]']").attr("selected", true)
+                })
+            }
+            /*]]>*/
+        </script>
+
+    </body>
+
+</html>

@@ -1,6 +1,8 @@
 package com.smithies.analoguedataexporter.controllers;
 
-import com.smithies.analoguedataexporter.model.AnalogueParameters;
+import com.smithies.analoguedataexporter.repositories.ChannelRepository;
+import com.smithies.analoguedataexporter.repositories.InterlockingRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ import java.util.Date;
 @RequestMapping(path="reports")
 public class ReportController {
 
+    @Autowired
+    private InterlockingRepository siteRepo;
+
     @GetMapping()
     public String getReports(Model model)
     {
@@ -22,19 +27,31 @@ public class ReportController {
     @GetMapping(path="raw-analogue-events")
     public String getRawAnalogueEvents(Model model)
     {
-        return "reports/raw-analogue-events";
+        model.addAttribute("sites", siteRepo.findAll());
+        return "reports/analogue-index";
     }
 
     @PostMapping(path="raw-analogue-events")
-    public void generateReport(@ModelAttribute("site") String site, @ModelAttribute("channel") String channel,
-                               @ModelAttribute("from") String from, @ModelAttribute("to") String to) {
+    public String preFillParameters(@ModelAttribute("site") Short site, @ModelAttribute("channel") Integer channel,
+                                    @ModelAttribute("from") String from, @ModelAttribute("to") String to, Model model) {
+        model.addAttribute("sites", siteRepo.findAll());
+        return "reports/analogue-index";
+    }
+
+    @PostMapping(path="raw-analogue-events/parameters")
+    public String generateReport(@ModelAttribute("site") Short siteId, @ModelAttribute("channel") Integer channelId,
+                                 @ModelAttribute("from") String from, @ModelAttribute("to") String to, Model model) {
+        // Redirect to report results page. The site and channel values will stay attached to the model.
+        // But the dates should be converted from strings
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date dateFrom = format.parse(from);
             Date dateTo = format.parse(to);
-            System.out.println(site);
+            model.addAttribute("dateFrom", dateFrom);
+            model.addAttribute("dateTo", dateTo);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return "reports/analogue_results";
     }
 }
