@@ -15,9 +15,7 @@
         <section id="breadcrumbs">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active">
-                    <a href="/reports/raw-analogue-events/{{currentParameters.id ?  currentParameters.id : ''}}">Raw Analogue Events</a>
-                </li>
+                <li class="breadcrumb-item active">Raw Analogue Events</li>
             </ol>
         </section>
 
@@ -86,24 +84,47 @@
             /*<![CDATA[*/
             // If model attributes exist in memory, populate the values on page load
             $(document).ready(function() {
-                var site = [[${site}]]
+                var siteSearch = /[&?]site=([^&]+)/.exec(location.search)
+                var site = siteSearch == null ? "" : siteSearch[1]
+                var channelSearch = /[&?]channel=([^&]+)/.exec(location.search)
+                var channel = channelSearch == null ? "" : channelSearch[1]
+                var fromSearch = /[&?]from=([^&]+)/.exec(location.search)
+                var from = fromSearch == null ? "" : fromSearch[1]
+                var toSearch = /[&?]to=([^&]+)/.exec(location.search)
+                var to = toSearch == null ? "" : toSearch[1]
                 if (site != "") {
-                    console.log($("#siteSelect option[value='[[${site}]]']"))
-                    $("#siteSelect option[value='[[${site}]]']").attr("selected", true)
-                }
-                if (site!=null) {
-                    if ([[${channel}]] !="") {
-                        populateChannelSelectAndSelected(site)
+                    $("#siteSelect").val(site)
+                    if (channel !="") {
+                        populateChannelSelectAndSelected(site, channel)
                     } else {
                         populateChannelSelect(site)
                     }
                 }
-                if ([[${from}]] != "") {
-                    document.querySelector('#fromSelect').value = [[${from}]]
+                if (from != "") {
+                    document.querySelector('#fromSelect').value = from
                 }
-                if ([[${to}]] != "") {
-                    document.querySelector('#toSelect').value = [[${to}]]
+                if (to != "") {
+                    document.querySelector('#toSelect').value = to
                 }
+
+//                var site = [[${site}]]
+//                if (site != "") {
+//                    console.log($("#siteSelect option[value='[[${site}]]']"))
+//                    $("#siteSelect option[value='[[${site}]]']").attr("selected", true)
+//                }
+//                if (site!=null) {
+//                    if ([[${channel}]] !="") {
+//                        populateChannelSelectAndSelected(site)
+//                    } else {
+//                        populateChannelSelect(site)
+//                    }
+//                }
+//                if ([[${from}]] != "") {
+//                    document.querySelector('#fromSelect').value = [[${from}]]
+//                }
+//                if ([[${to}]] != "") {
+//                    document.querySelector('#toSelect').value = [[${to}]]
+//                }
             })
 
             function popoulateSiteSelect() {
@@ -120,6 +141,7 @@
             function populateChannelSelect(siteId) {
                 $.get("/channels/site/"+siteId, function(channels) {
                     var option = ''
+                    // Create an empty option and have it selected by default
                     for (var i=0; i<channels.length;i++) {
                         option += '<option value="' + channels[i].id + '" text="' + channels[i].name + '">' + channels[i].name + '</option>';
                     }
@@ -127,7 +149,7 @@
                 })
             }
 
-            function populateChannelSelectAndSelected(siteId) {
+            function populateChannelSelectAndSelected(siteId, channel) {
                 $.get("/channels/site/"+siteId, function(channels) {
                     var option = ''
                     for (var i=0; i<channels.length;i++) {
@@ -135,8 +157,7 @@
                     }
                     $("#channelSelect").find('option').remove().end().append(option);
                     // Now, still within the asynchronous callback, select the channel that was selected
-                    console.log([[${channel}]])
-                    $("#channelSelect option[value='[[${channel}]]']").attr("selected", true)
+                    $("#channelSelect").val(channel)
                 })
             }
             /*]]>*/
