@@ -1,13 +1,11 @@
 package com.smithies.analoguedataexporter.controllers;
 
 import com.smithies.analoguedataexporter.entities.AnalogueEvent;
-import com.smithies.analoguedataexporter.repositories.EventAnalogueRepository;
+import com.smithies.analoguedataexporter.repositories.AnalogueEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,12 +14,12 @@ import java.util.List;
 public class EventsController {
 
     @Autowired
-    private EventAnalogueRepository eventAnalogueRepository;
+    private AnalogueEventRepository analogueEventRepository;
 
     @GetMapping(path="/{id}")
     public @ResponseBody
     AnalogueEvent getEvent(@PathVariable("id") final Integer id) {
-        AnalogueEvent analogueEvent = eventAnalogueRepository.findOne(id);
+        AnalogueEvent analogueEvent = analogueEventRepository.findOne(id);
         return analogueEvent;
     }
 
@@ -29,7 +27,7 @@ public class EventsController {
     public @ResponseBody
     Iterable<AnalogueEvent> getEvents() {
         List<Integer> eventIds = Arrays.asList(685144355, 685144356, 685144353);
-        return eventAnalogueRepository.findAll(eventIds);
+        return analogueEventRepository.findAll(eventIds);
     }
 
 }

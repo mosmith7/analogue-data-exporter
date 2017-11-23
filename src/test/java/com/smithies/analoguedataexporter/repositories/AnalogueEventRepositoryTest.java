@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 public class AnalogueEventRepositoryTest extends UnitTest {
 
     @Autowired
-    private EventAnalogueRepository repo;
+    private AnalogueEventRepository repo;
 
     @Test
     public void testFindEventById() throws Exception {
