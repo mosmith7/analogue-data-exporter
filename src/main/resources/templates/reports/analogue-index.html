@@ -25,25 +25,25 @@
         <form id="form" action="#" action="/reports/raw-analogue-events/parameters" method="post">
             <div class="container">
                 <div class="row">
-                    <label>Site:</label>
-                    <select id="siteSelect" name="site">
+                    <label class="col-sm-1">Site:</label>
+                    <select id="siteSelect" name="site" class="col-sm-3 col-sm-offset-1">
                         <option value="" selected="selected">--Select a Site--</option>
                         <option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
                     </select>
-                    <label>Channel:</label>
-                    <select id="channelSelect" name="channel">
+                    <label class="col-sm-1">Channel:</label>
+                    <select id="channelSelect" name="channel" class="col-sm-3 col-sm-offset-1">
                         <option value="" selected="selected"></option>
                     </select>
                 </div>
                 <div class="row">
-                    <label>From:</label><input id="fromSelect" class="col-ms-6" type="date" value = "" name="from">
-                    <label>To:</label> <input  id="toSelect" class="col-ms-6" type="date" value = "" name="to">
+                    <label class="col-sm-1">From:</label><input id="fromSelect" class="col-sm-3 col-sm-offset-1" type="date" value = "" name="from">
+                    <label class="col-sm-1">To:</label> <input  id="toSelect" class="col-sm-3 col-sm-offset-1" type="date" value = "" name="to">
                 </div>
                 <div class="row">
-                    <div class="col-md-3 text-left form-group">
+                    <div class="col-sm-3 form-group">
                         <button type="submit" class="btn btn-success">Generate Report</button>
                     </div>
-                    <div class="col-md-3 text-right form-group">
+                    <div class="col-sm-3 col-sm-offset-5 form-group">
                         <button type="reset" class="btn btn-primary">Reset From</button>
                     </div>
                 </div>
