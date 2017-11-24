@@ -6,6 +6,8 @@
 
     <head>
         <div th:replace = "common/head :: head (title='Report Results')"> </div>
+        <script type = "text/javascript"
+                src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     </head>
 
     <body>
@@ -28,10 +30,10 @@
                     <div class="col-md-3 col-md-offset-3 col-xs-3 form-group">
                         <button type="submit" class="btn btn-success">Edit Parameters</button>
                     </div>
-                    <input type="hidden" th:value="${site}" th:attr="name='site'">
-                    <input type="hidden" th:value="${channel}" th:attr="name='channel'">
-                    <input type="hidden" th:value="${from}" th:attr="name='from'">
-                    <input type="hidden" th:value="${to}" th:attr="name='to'">
+                    <input id=hiddenSite type="hidden" th:value="${site}" th:attr="name='site'">
+                    <input id=hiddenChannel type="hidden" th:value="${channel}" th:attr="name='channel'">
+                    <input id=hiddenFrom type="hidden" th:value="${from}" th:attr="name='from'">
+                    <input id=hiddenTo type="hidden" th:value="${to}" th:attr="name='to'">
                 </form>
             </div>
             <div class="row">
@@ -41,11 +43,69 @@
                 <p class="col-md-3 col-md-offset-2">Selected To:</p><p id="selectedTo" class="col-md-3 col-md-offset-6" th:text="${dateTo}"></p>
             </div>
 
+            <div class = "row">
+                <div class="col">
+                    <!--<form action="#" action="/reports/raw-analogue-events/generate" method="post">-->
+                        <!--<div>-->
+                            <!--<button type="submit" class="btn btn-success">Generate Report</button>-->
+                        <!--</div>-->
+                        <!--<input type="hidden" th:value="${reportId}" th:attr="name='reportId'">-->
+                    <!--</form>-->
+                    <div class="col">
+                        <button th:onclick="'javascript:generateReport('+ ${reportId} + ')'" class="btn btn-success">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class = "row">
+                <p>Once the report is ready you can export the data to CSV</p>
+                <div class="col">
+                    <form action="#" th:action="@{/reports/raw-analogue-events/csv/{id}(id=${reportId})}" method="GET">
+                        <button id="csvButton" disabled="disabled" onclick="submit" class="btn btn-success">Export CSV</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
 
         <div th:replace = "common/footer :: footer"></div>
 
+    <script th:inline="javascript">
+        // Use thymeleaf script inlining (<script th:inline="javascript">) to be able to access model attributes in javascript
+        /*<![CDATA[*/
+        $(document).ready(function() {
+                populateParameters(/*[[${reportId}]]*/);
+        })
+
+        function populateParameters(id) {
+            $.get("/reports/"+id, function(report) {
+                $("#hiddenSite").val(report.site);
+                $("#hiddenChannel").val(report.channel);
+                $("#hiddenFrom").val(report.from);
+                $("#hiddenTo").val(report.to);
+                $("#selectedSite").val(report.site);
+                $("#selectedChannel").val(report.channel);
+                $("#selectedFrom").val(report.from);
+                $("#selectedTo").val(report.to);
+            })
+        }
+
+        function generateReport(id) {
+            $.ajax({
+                url: "/reports/raw-analogue-events/generate/"+id,
+                type: "POST",
+                contentType:"application/json"
+            }).done(function(r) {
+                alert("Report Generated!")
+                // When this call returns, the report is generated, so allow user to click button to download csv
+                $("#csvButton").removeAttr("disabled");
+            }).error(function(e) {
+                alert("Epic Fail!" + e)
+            })
+        }
+        /*]]>*/
+    </script>
 
     </body>
 

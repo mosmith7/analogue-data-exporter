@@ -2,31 +2,41 @@ package com.smithies.analoguedataexporter.valueobjects;
 
 public class RawAnalogueEventsReportParametersVO {
 
-    private String site;
-    private String channel;
+    private Integer id;
+    private InterlockingVO site;
+    private ChannelVO channel;
     private long from;
     private long to;
 
-    public RawAnalogueEventsReportParametersVO(String site, String channel, long from, long to) {
+    public RawAnalogueEventsReportParametersVO(Integer id, InterlockingVO site, ChannelVO channel, long from, long to) {
+        this.id = id;
         this.site = site;
         this.channel = channel;
         this.from = from;
         this.to = to;
     }
 
-    public String getSite() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public InterlockingVO getSite() {
         return site;
     }
 
-    public void setSite(String site) {
+    public void setSite(InterlockingVO site) {
         this.site = site;
     }
 
-    public String getChannel() {
+    public ChannelVO getChannel() {
         return channel;
     }
 
-    public void setChannel(String channel) {
+    public void setChannel(ChannelVO channel) {
         this.channel = channel;
     }
 

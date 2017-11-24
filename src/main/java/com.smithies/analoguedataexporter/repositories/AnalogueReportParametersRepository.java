@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface AnalogueReportParametersRepository extends CrudRepository<AnalogueReportParameters, Integer> {
 
-    Optional<AnalogueReportParameters> findOptionalOne(Integer id);
+    Optional<AnalogueReportParameters> findById(Integer id);
 
     // TODO: Find all reports saved to user
 //    List<AnalogueReportParameters> findByUser_Id(Short id);
