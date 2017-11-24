@@ -1,10 +1,10 @@
 package com.smithies.analoguedataexporter.services;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
+import java.io.IOException;
 
 public interface IAnalogueReportService {
-    void downloadCsv(UUID id, HttpServletResponse response);
+    void downloadCsv(Integer id, HttpServletResponse response) throws IOException;
 
-    UUID saveParameters(Short siteId, Integer channelId, long from, long to);
+    Integer saveParameters(Short siteId, Integer channelId, long from, long to);
 }

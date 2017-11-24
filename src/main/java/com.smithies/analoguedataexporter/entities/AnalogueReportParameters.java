@@ -1,15 +1,14 @@
 package com.smithies.analoguedataexporter.entities;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
-@Table(name="report_parameters_aips")
+@Table(name="report_parameters_analogue")
 public class AnalogueReportParameters {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Integer id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name="interlocking")
@@ -19,23 +18,23 @@ public class AnalogueReportParameters {
     @JoinColumn(name="channel")
     private Channel channel;
 
-    @Column(nullable=false)
-    private long from;
+    @Column
+    private long dateFrom;
 
-    @Column(nullable=false)
-    private long to;
+    @Column
+    private long dateTo;
 
     public AnalogueReportParameters() {
     }
 
-    public AnalogueReportParameters(Interlocking interlocking, Channel channel, long from, long to) {
+    public AnalogueReportParameters(Interlocking interlocking, Channel channel, long dateFrom, long dateTo) {
         this.interlocking = interlocking;
         this.channel = channel;
-        this.from = from;
-        this.to = to;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
     }
 
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -47,11 +46,11 @@ public class AnalogueReportParameters {
         return channel;
     }
 
-    public long getFrom() {
-        return from;
+    public long getDateFrom() {
+        return dateFrom;
     }
 
-    public long getTo() {
-        return to;
+    public long getDateTo() {
+        return dateTo;
     }
 }

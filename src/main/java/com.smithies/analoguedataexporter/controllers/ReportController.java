@@ -1,7 +1,5 @@
 package com.smithies.analoguedataexporter.controllers;
 
-import com.smithies.analoguedataexporter.entities.AnalogueReportParameters;
-import com.smithies.analoguedataexporter.repositories.ChannelRepository;
 import com.smithies.analoguedataexporter.repositories.InterlockingRepository;
 import com.smithies.analoguedataexporter.services.IAnalogueReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 @Controller
 @RequestMapping(path="reports")
@@ -57,12 +54,13 @@ public class ReportController {
             Date dateTo = format.parse(to);
             model.addAttribute("dateFrom", dateFrom);
             model.addAttribute("dateTo", dateTo);
+            // Save parameters to DB with a specific ID (linked to user ID) and add the ID to the model attributes.
+            Integer id = analogueReportService.saveParameters(siteId, channelId, dateFrom.getTime(), dateTo.getTime());
+            model.addAttribute("reportId", id);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        // Save parameters to DB with a specific ID (linked to user ID) and add the ID to the model attributes.
-        UUID id = analogueReportService.saveParameters(siteId, channelId, Long.valueOf(from), Long.valueOf(to));
-        model.addAttribute("reportId", id);
+
 
         // Start new thread to start generating reports
 
@@ -70,7 +68,7 @@ public class ReportController {
     }
 
     @GetMapping("/raw-analogue-events/csv/{id}")
-    public @ResponseBody void downloadCsv(@PathVariable("id") UUID id, HttpServletResponse response) throws IOException {
+    public @ResponseBody void downloadCsv(@PathVariable("id") Integer id, HttpServletResponse response) throws IOException {
         analogueReportService.downloadCsv(id, response);
     }
 }
