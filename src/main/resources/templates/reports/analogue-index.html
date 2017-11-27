@@ -63,24 +63,13 @@
                     <!-- All generated reports on right of page -->
                     <div>
                         <h1>Generated Reports</h1>
-                        <!--<form action="#" action="/reports/analogue_results" method="get">-->
-                        <!--<select id="reportSelect" name="reportId" class="col-sm-4 col-sm-offset-1">-->
-                        <!--<option value="" selected="selected">&#45;&#45;Select a Report&#45;&#45;</option>-->
-                        <!--<option th:each="site : ${reports}" th:value="${report.id}" th:text="${report.id}"></option>-->
-                        <!--</select>-->
-                        <!--<div>-->
-                        <!--<button type="submit" class="btn btn-primary">View Report</button>-->
-                        <!--</div>-->
-                        <!--</form>-->
-
-                        <ul id="reportsList">
-                            <li th:if="${#lists.isEmpty(reports)}">
-                                No reports have been created yet
-                            </li>
-                            <li th:if="${not #lists.isEmpty(reports)}" th:each="report : ${reports}" th:text="${report.id}">
-                                <a th:href="@{/reports/analogue_results/{id}(id=${report.id})}">Report description</a>
-                            </li>
-                        </ul>
+                        <table id="reportsTable">
+                            <tr>
+                                <th width="20%">ID</th>
+                                <th width="40%">link</th>
+                                <th width = "40%">CSV Generated</th>
+                            </tr>
+                        </table>
                     </div>
                 </div>
 
@@ -205,20 +194,34 @@
 
             function populateReportsList() {
                 $.get("/reports/all", function(reports) {
-                    var ul = document.getElementById("reportsList")
-                    if (reports.length > 0) {
-                        $("#reportsList").empty()
-                    }
-                    for (var i=0; i<reports.length;i++) {
-                        var li = document.createElement("li")
-                        li.appendChild(document.createTextNode(reports[i].id))
-                        var a = document.createElement("a")
-                        a.setAttribute("href", "/reports/analogue_results?reportId="+reports[i].id)
-                        a.appendChild(document.createTextNode("View report"))
-                        li.setAttribute("id", reports[i].id)
-                        li.appendChild(a)
-                        ul.appendChild(li)
-                    }
+                    var ids = reports.map(function(report) {
+                        return report.id
+                    })
+                    $.ajax({
+                        url: "/reports/raw-analogue-events/generated",
+                        type: "POST",
+                        contentType:"application/json",
+                        data: JSON.stringify(ids),
+                        success: function(data) {
+                            fillInTable(reports, data)
+                        }
+                    })
+
+
+//                    var ul = document.getElementById("reportsList")
+//                    if (reports.length > 0) {
+//                        $("#reportsList").empty()
+//                    }
+//                    for (var i=0; i<reports.length;i++) {
+//                        var li = document.createElement("li")
+//                        li.appendChild(document.createTextNode(reports[i].id))
+//                        var a = document.createElement("a")
+//                        a.setAttribute("href", "/reports/analogue_results?reportId="+reports[i].id)
+//                        a.appendChild(document.createTextNode("View report"))
+//                        li.setAttribute("id", reports[i].id)
+//                        li.appendChild(a)
+//                        ul.appendChild(li)
+//                    }
 //                    areReportsGenerated(reports)
                 })
             }
@@ -230,14 +233,59 @@
 //                return reports
 //            })
 
+            fillInTable = function(reports, areGenerated) {
+                console.log(areGenerated)
+                var table = document.getElementById("reportsTable")
+                for (var i=0; i<reports.length;i++) {
+                    console.log("here")
+                    var tr = document.createElement("tr")
+                    var td1 = document.createElement("td")
+                    var td2 = document.createElement("td")
+                    var td3 = document.createElement("td")
+                    td1.appendChild(document.createTextNode(reports[i].id))
+                    console.log("here2")
+                    var a = document.createElement("a")
+                    a.setAttribute("href", "/reports/analogue_results?reportId="+reports[i].id)
+                    a.appendChild(document.createTextNode("View report"))
+                    td2.appendChild(a)
+                    var form = document.createElement("form")
+                    form.setAttribute("action", "/reports/raw-analogue-events/csv/"+reports[i].id)
+                    form.setAttribute("method", "GET")
+                    console.log("here3")
+                    if (areGenerated[i]) {
+                        var button = document.createElement("button")
+                        button.setAttribute("id", "csvButton")
+                        button.setAttribute("onClick", "submit")
+                        button.setAttribute("class", "btn btn-success")
+                        button.appendChild(document.createTextNode("Download CSV"))
+                        form.appendChild(button)
+                    } else {
+                        var button = document.createElement("button")
+                        button.setAttribute("id", "csvButton")
+                        button.setAttribute("onClick", "submit")
+                        button.setAttribute("class", "btn btn-danger")
+                        button.setAttribute("disabled", "disabled")
+                        button.appendChild(document.createTextNode("CSV not generated"))
+                        form.appendChild(button)
+                    }
+                    console.log("here4")
+                    td3.appendChild(form)
+                    tr.appendChild(td1)
+                    tr.appendChild(td2)
+                    tr.appendChild(td3)
+                    table.appendChild(tr)
+                    console.log("here5")
+                }
+            }
+
             function areReportsGenerated(ids) {
-                $.ajax({
+                return $.ajax({
                     url: "/reports/raw-analogue-events/generated",
                     type: "POST",
                     contentType:"application/json",
                     data: ids
                 }).done(function(r) {
-                    ids.forEach()
+                    return r
                 }).error(function(e) {
                     alert("Epic Fail!" + e)
                 })

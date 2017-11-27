@@ -84,7 +84,6 @@ public class ReportController {
     }
 
     @PostMapping(path="raw-analogue-events/generated")
-    @ResponseStatus(value= HttpStatus.OK)
     public @ResponseBody List<Boolean> areGenerated(@RequestBody List<Integer> reportIds, Model model) {
         return analogueReportService.reportCSVsExist(reportIds);
     }
