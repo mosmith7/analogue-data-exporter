@@ -12,13 +12,14 @@ import com.smithies.analoguedataexporter.repositories.InterlockingRepository;
 import com.smithies.analoguedataexporter.valueobjects.RawAnalogueEventsReportParametersVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 class AnalogueReportService implements IAnalogueReportService {
@@ -118,6 +119,7 @@ class AnalogueReportService implements IAnalogueReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void generateReport(Integer id) {
         AnalogueReportParameters parameters = parametersRepository.findById(id).orElseThrow(() -> {
             return new RuntimeException("Could not find the report parameters with id " + id);
@@ -129,10 +131,8 @@ class AnalogueReportService implements IAnalogueReportService {
             return;
         }
 
-        List<AnalogueEvent> events = analogueRepository.findByChannel_IdAndDateBetween(parameters.getChannel().getId(),
-                parameters.getDateFrom(), parameters.getDateTo());
-
-        if (events.isEmpty()) {
+        if (analogueRepository.countByChannel_IdAndDateBetween(parameters.getChannel().getId(),
+                parameters.getDateFrom(), parameters.getDateTo())==0) {
             throw new RuntimeException("No data found for the parameters selected");
         }
 
@@ -144,10 +144,15 @@ class AnalogueReportService implements IAnalogueReportService {
             // Writer header
             writer.writeNext(new String[]{"Site", "Channel", "Date (UTC)", "Value"});
 
-            events.forEach(e -> {
-                writer.writeNext(new String[]{parameters.getInterlocking().getName(), e.getChannel().getName(),
-                        String.valueOf(e.getDate()), String.valueOf(e.getValue())});
-            });
+            // Get a stream from the repository and write the streamed data into a file. To avoid bringing lots of data into memory
+            try (Stream<AnalogueEvent> events = analogueRepository.findByChannel_IdAndDateBetween(parameters.getChannel().getId(),
+                    parameters.getDateFrom(), parameters.getDateTo())) {
+                events.forEach(e -> {
+                    writer.writeNext(new String[]{parameters.getInterlocking().getName(), e.getChannel().getName(),
+                            String.valueOf(e.getDate()), String.valueOf(e.getValue())});
+                });
+            }
+
 
             // Close writer
             writer.close();
