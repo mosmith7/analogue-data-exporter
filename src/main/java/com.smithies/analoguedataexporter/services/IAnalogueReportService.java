@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IAnalogueReportService {
+    boolean reportCSVExists(Integer id);
+
+    List<Boolean> reportCSVsExist(List<Integer> ids);
+
     void downloadCsv(Integer id, HttpServletResponse response) throws IOException;
 
     void generateReport(Integer id);

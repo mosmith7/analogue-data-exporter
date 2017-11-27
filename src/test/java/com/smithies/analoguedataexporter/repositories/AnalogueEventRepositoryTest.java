@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup(value = {"/interlocking_data.xml",
                         "/channel_data.xml",
@@ -26,9 +27,9 @@ public class AnalogueEventRepositoryTest extends UnitTest {
 
     @Test
     public void testFindEventById() throws Exception {
-        AnalogueEvent event = repo.findOne(1);
+        AnalogueEvent event = repo.findOne(1l);
         assertNotNull(event);
-        assertEquals(new Integer(1), event.getId());
+        assertTrue(1 == event.getId());
     }
 
     @Test
@@ -38,13 +39,13 @@ public class AnalogueEventRepositoryTest extends UnitTest {
 
     @Test
     public void testDeleteEvent() {
-        repo.delete(1);
-        assertNull(repo.findOne(1));
+        repo.delete(1l);
+        assertNull(repo.findOne(1l));
     }
 
     @Test
     public void testEventContainsChannel() {
-        AnalogueEvent event = repo.findOne(2);
+        AnalogueEvent event = repo.findOne(2l);
         Channel channel = event.getChannel();
         assertNotNull(channel);
         assertEquals(new Integer(2), channel.getId());
@@ -53,7 +54,7 @@ public class AnalogueEventRepositoryTest extends UnitTest {
 
     @Test
     public void testChannelContainsSite() {
-        AnalogueEvent event = repo.findOne(3);
+        AnalogueEvent event = repo.findOne(3l);
         Interlocking site = event.getChannel().getInterlocking();
         assertNotNull(site);
         assertEquals(new Short("3"), site.getId());

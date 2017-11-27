@@ -75,7 +75,8 @@
         // Use thymeleaf script inlining (<script th:inline="javascript">) to be able to access model attributes in javascript
         /*<![CDATA[*/
         $(document).ready(function() {
-                populateParameters(/*[[${reportId}]]*/);
+            populateParameters(/*[[${reportId}]]*/);
+
         })
 
         function populateParameters(id) {

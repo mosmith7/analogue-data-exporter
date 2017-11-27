@@ -2,8 +2,8 @@
 
 <dataset>
 
-    <event_analogue id="1" date="10000000" significance="1" value="1" channel="1"/>
-    <event_analogue id="2" date="20000000" significance="2" value="2" channel="2"/>
-    <event_analogue id="3" date="30000000" significance="3" value="3" channel="3"/>
-    <event_analogue id="4" date="40000000" significance="4" value="4" channel="4"/>
+    <event_analogue id="1" date="10000000" significance="1" value="1.012345" channel="1"/>
+    <event_analogue id="2" date="20000000" significance="2" value="2.012345" channel="2"/>
+    <event_analogue id="3" date="30000000" significance="3" value="3.012345" channel="3"/>
+    <event_analogue id="4" date="40000000" significance="4" value="4.012345" channel="4"/>
 </dataset>

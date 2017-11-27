@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AnalogueEventRepository extends CrudRepository<AnalogueEvent, Integer> {
+public interface AnalogueEventRepository extends CrudRepository<AnalogueEvent, Long> {
 
     List<AnalogueEvent> findByChannel_IdAndDateBetween(Integer id, long dateFrom, long dateTo);
+
+    Long countByChannel_IdAndDateBetween(Integer id, long dateFrom, long dateTo);
 }

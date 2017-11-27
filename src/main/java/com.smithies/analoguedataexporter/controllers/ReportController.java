@@ -77,6 +77,18 @@ public class ReportController {
 
     }
 
+    @GetMapping(path="raw-analogue-events/generated/{id}")
+    @ResponseStatus(value= HttpStatus.OK)
+    public boolean isGenerated(@PathVariable("id") Integer reportId, Model model) {
+        return analogueReportService.reportCSVExists(reportId);
+    }
+
+    @PostMapping(path="raw-analogue-events/generated")
+    @ResponseStatus(value= HttpStatus.OK)
+    public @ResponseBody List<Boolean> areGenerated(@RequestBody List<Integer> reportIds, Model model) {
+        return analogueReportService.reportCSVsExist(reportIds);
+    }
+
     @GetMapping("/raw-analogue-events/csv/{id}")
     public @ResponseBody void downloadCsv(@PathVariable("id") Integer id, HttpServletResponse response) throws IOException {
         analogueReportService.downloadCsv(id, response);
@@ -93,8 +105,7 @@ public class ReportController {
     }
 
     @GetMapping("analogue_results")
-    public String viewReport(@RequestParam("reportId") Integer reportId,
-                                                                        Model model) {
+    public String viewReport(@RequestParam("reportId") Integer reportId, Model model) {
         RawAnalogueEventsReportParametersVO report = analogueReportService.getReport(reportId);
         model.addAttribute("site", report.getSite().getId());
         model.addAttribute("channel", report.getChannel().getId());

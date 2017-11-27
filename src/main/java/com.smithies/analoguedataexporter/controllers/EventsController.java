@@ -18,7 +18,7 @@ public class EventsController {
 
     @GetMapping(path="/{id}")
     public @ResponseBody
-    AnalogueEvent getEvent(@PathVariable("id") final Integer id) {
+    AnalogueEvent getEvent(@PathVariable("id") final long id) {
         AnalogueEvent analogueEvent = analogueEventRepository.findOne(id);
         return analogueEvent;
     }
@@ -26,7 +26,7 @@ public class EventsController {
     @GetMapping(path="")
     public @ResponseBody
     Iterable<AnalogueEvent> getEvents() {
-        List<Integer> eventIds = Arrays.asList(685144355, 685144356, 685144353);
+        List<Long> eventIds = Arrays.asList(685144355l, 685144356l, 685144353l);
         return analogueEventRepository.findAll(eventIds);
     }
 
