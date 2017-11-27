@@ -27,7 +27,7 @@
                 <div class="col-md-12 col-lg-4">
                     <div>
                         <h1>Select parameters</h1>
-                        <form id="form" action="#" action="/reports/raw-analogue-events/parameters" method="post">
+                        <form id="form">
                             <div class="form-group">
                                 <label>Site:</label>
                                 <select id="siteSelect" name="site">
@@ -51,7 +51,9 @@
                             </div>
                             <div class = "row">
                                 <div class="form-inline">
-                                    <button type="submit" class="btn btn-success">Confirm Parameters</button>
+                                    <!--<button th:onclick="'javascript:submitParameters(\'' + ${site} +'\',\''+-->
+                                    <!--${channel}+'\',\''+${from}+'\',\''+${to} + '\');'" type="button" class="btn btn-success">Confirm Parameters</button>-->
+                                    <button onclick="submitParameters()" type="button" class="btn btn-success">Confirm Parameters</button>
                                     <button type="reset" class="btn btn-primary">Reset From</button>
                                 </div>
                             </div>
@@ -145,7 +147,7 @@
 
                 populateReportsSelect()
 
-                populateReportsList()
+                populateReportsTable()
             })
 
             function popoulateSiteSelect() {
@@ -192,7 +194,37 @@
                 })
             }
 
-            function populateReportsList() {
+            function submitParameters() {
+                var siteSelect = document.getElementById("siteSelect");
+                var siteId = siteSelect.options[siteSelect.selectedIndex].value
+                var channelSelect = document.getElementById("channelSelect");
+                var channelId = channelSelect.options[channelSelect.selectedIndex].value
+                console.log("site: " + siteId + ", channel: " + channelId )
+                var dateFrom = document.getElementById("fromSelect").value
+                var dateTo = document.getElementById("toSelect").value
+                console.log("from: " + dateFrom + ", to: " + dateTo)
+                return $.ajax({
+                    url: "/reports/raw-analogue-events/parameters",
+                    type: "POST",
+                    contentType:"application/json",
+                    data: JSON.stringify({
+                        siteId: siteId,
+                        channelId: channelId,
+                        from: dateFrom,
+                        to: dateTo
+                    }),
+                    success: function(r) {
+                        window.location.href = "raw-analogue-events/parameters/" + r
+                    },
+                    statusCode: {
+                        500: function(){
+                            alert("No data was found for the parameters selected")
+                        }
+                    }
+                })
+            }
+
+            function populateReportsTable() {
                 $.get("/reports/all", function(reports) {
                     var ids = reports.map(function(report) {
                         return report.id
@@ -206,44 +238,18 @@
                             fillInTable(reports, data)
                         }
                     })
-
-
-//                    var ul = document.getElementById("reportsList")
-//                    if (reports.length > 0) {
-//                        $("#reportsList").empty()
-//                    }
-//                    for (var i=0; i<reports.length;i++) {
-//                        var li = document.createElement("li")
-//                        li.appendChild(document.createTextNode(reports[i].id))
-//                        var a = document.createElement("a")
-//                        a.setAttribute("href", "/reports/analogue_results?reportId="+reports[i].id)
-//                        a.appendChild(document.createTextNode("View report"))
-//                        li.setAttribute("id", reports[i].id)
-//                        li.appendChild(a)
-//                        ul.appendChild(li)
-//                    }
-//                    areReportsGenerated(reports)
                 })
             }
-
-//            $.document().before(function() {
-//                var reports = $.get("/reports/all", function(reports) {
-//                    return reports
-//                })
-//                return reports
-//            })
 
             fillInTable = function(reports, areGenerated) {
                 console.log(areGenerated)
                 var table = document.getElementById("reportsTable")
                 for (var i=0; i<reports.length;i++) {
-                    console.log("here")
                     var tr = document.createElement("tr")
                     var td1 = document.createElement("td")
                     var td2 = document.createElement("td")
                     var td3 = document.createElement("td")
                     td1.appendChild(document.createTextNode(reports[i].id))
-                    console.log("here2")
                     var a = document.createElement("a")
                     a.setAttribute("href", "/reports/analogue_results?reportId="+reports[i].id)
                     a.appendChild(document.createTextNode("View report"))
@@ -251,7 +257,6 @@
                     var form = document.createElement("form")
                     form.setAttribute("action", "/reports/raw-analogue-events/csv/"+reports[i].id)
                     form.setAttribute("method", "GET")
-                    console.log("here3")
                     if (areGenerated[i]) {
                         var button = document.createElement("button")
                         button.setAttribute("id", "csvButton")
@@ -268,13 +273,11 @@
                         button.appendChild(document.createTextNode("CSV not generated"))
                         form.appendChild(button)
                     }
-                    console.log("here4")
                     td3.appendChild(form)
                     tr.appendChild(td1)
                     tr.appendChild(td2)
                     tr.appendChild(td3)
                     table.appendChild(tr)
-                    console.log("here5")
                 }
             }
 

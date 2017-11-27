@@ -1,5 +1,6 @@
 package com.smithies.analoguedataexporter.controllers;
 
+import com.smithies.analoguedataexporter.model.ParametersRequest;
 import com.smithies.analoguedataexporter.repositories.InterlockingRepository;
 import com.smithies.analoguedataexporter.services.IAnalogueReportService;
 import com.smithies.analoguedataexporter.valueobjects.RawAnalogueEventsReportParametersVO;
@@ -47,24 +48,31 @@ public class ReportController {
     }
 
     @PostMapping(path="raw-analogue-events/parameters")
-    public String parameters(@ModelAttribute("site") Short siteId, @ModelAttribute("channel") Integer channelId,
-                                 @ModelAttribute("from") String from, @ModelAttribute("to") String to, Model model) {
+    public @ResponseBody Integer parameters(@RequestBody ParametersRequest request, Model model) {
         // Redirect to report results page. The site and channel values will stay attached to the model.
         // But the dates should be converted from strings
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Integer id = null;
         try {
-            Date dateFrom = format.parse(from);
-            Date dateTo = format.parse(to);
-            model.addAttribute("dateFrom", dateFrom);
-            model.addAttribute("dateTo", dateTo);
+            Date dateFrom = format.parse(request.getFrom());
+            Date dateTo = format.parse(request.getTo());
             // Save parameters to DB with a specific ID (linked to user ID) and add the ID to the model attributes.
-            id = analogueReportService.saveParameters(siteId, channelId, dateFrom.getTime(), dateTo.getTime());
-            model.addAttribute("reportId", id);
+            id = analogueReportService.saveParameters(request.getSiteId(), request.getChannelId(), dateFrom.getTime(), dateTo.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
+        return id;
+    }
+
+    @GetMapping(path="raw-analogue-events/parameters/{id}")
+    public String parameters(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("reportId", id);
+        RawAnalogueEventsReportParametersVO parameters = analogueReportService.getReport(id);
+        model.addAttribute("dateFrom", parameters.getFrom());
+        model.addAttribute("dateTo", parameters.getTo());
+        model.addAttribute("site", parameters.getSite().getId());
+        model.addAttribute("channel", parameters.getChannel().getId());
         return "reports/analogue_results";
     }
 
