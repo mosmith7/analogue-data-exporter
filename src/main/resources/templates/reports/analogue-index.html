@@ -8,6 +8,14 @@
         <div th:replace = "common/head :: head (title='Raw Analogue Events')"> </div>
         <script type = "text/javascript"
                 src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+        <!--<script type = "text/javascript" th:href="@{/js/typeahead.bundle.min.js}"></script>-->
+        <!--<link rel="stylesheet" type="text/css" th:href="@{/css/jquery.typeahead.min.css}">-->
+        <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+
+        <!-- Import jQuery last otherwise it can complain -->
+        <!--<script type = "text/javascript"-->
+                <!--src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>-->
     </head>
 
     <body>
@@ -21,25 +29,30 @@
 
         <div th:replace = "common/header :: header (title='Raw Analogue Events')"> </div>
 
-
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-lg-4">
                     <div>
                         <h1>Select parameters</h1>
                         <form id="form">
-                            <div class="form-group">
-                                <label>Site:</label>
-                                <select id="siteSelect" name="site">
-                                    <option value="" selected="selected">--Select a Site--</option>
-                                    <option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Channel:</label>
-                                <select id="channelSelect" name="channel">
-                                    <option value="" selected="selected"></option>
-                                </select>
+                            <div class="row">
+                                <div class="form-inline">
+                                    <div id="siteSearch" style="display: inline-block" >
+                                        <label>Site:</label>
+                                        <input class="typeahead" type="text" placeholder="Search for a site...">
+                                    </div>
+                                    <!--<div id = "scrollable-dropdown-menu">-->
+                                    <!--<input id="siteSearch" class="typeahead" type="text" placeholder="&#45;&#45;Select a site&#45;&#45;">-->
+                                    <!--</div>-->
+                                    <!--<select id="siteSelect" name="site">-->
+                                    <!--<option value="" selected="selected">&#45;&#45;Select a Site&#45;&#45;</option>-->
+                                    <!--<option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>-->
+                                    <!--</select>-->
+                                    <label>Channel:</label>
+                                    <select id="channelSelect" name="channel">
+                                        <option value="" selected="selected"></option>
+                                    </select>
+                                </div>
                             </div>
                             <div class = "row">
                                 <div class="form-inline">
@@ -94,13 +107,16 @@
             /*<![CDATA[*/
 
             // When the user selects a site, change the channel select options to match that site
-            $("#siteSelect").change(function() {
-                var siteId = $("#siteSelect").val()
-                if (siteId===""){
-                    $("#channelSelect").find('option').remove().end();
-                } else {
-                    populateChannelSelect(siteId)
-                }
+            $("#siteSearch").on("typeahead:selected", function(evt, siteName) {
+                console.log("Site selected: " +siteName)
+                $.get("/sites/"+siteName+"/id", function(siteId) {
+                    console.log("Site ID selected: "+siteId)
+                    if (siteId===""){
+                        $("#channelSelect").find('option').remove().end();
+                    } else {
+                        populateChannelSelect(siteId)
+                    }
+                })
             });
 
             // Check all fields filled in before submitted the form
@@ -148,7 +164,78 @@
                 populateReportsSelect()
 
                 populateReportsTable()
+
+                typeaheadExample()
+
             })
+
+            function typeaheadExample() {
+
+                var substringMatcher = new Bloodhound({
+                    datumTokenizer: Bloodhound.tokenizers.whitespace,
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    // `states` is an array of state names defined in "The Basics"
+//                    local: states
+                    prefetch: {
+                        url: '/sites/names'
+
+                        // get the whole site and filter to only display the site name
+//                        url: 'sites',
+//                        filter: function (sites) {
+//                            return $.map(sites, function (site) {
+//                                return {
+//                                    name: site.name,
+//                                    id: site.id,
+//                                    postcode: site.postcode,
+//                                    channels: site.channels
+//                                };
+//                            });
+//                        }
+                    }
+                });
+
+//                var substringMatcher = function(strs) {
+//                    return function findMatches(q, cb) {
+//                        var matches, substringRegex;
+//
+//                        // an array that will be populated with substring matches
+//                        matches = [];
+//
+//                        // regex used to determine if a string contains the substring `q`
+//                        substrRegex = new RegExp(q, 'i');
+//
+//                        // iterate through the pool of strings and for any string that
+//                        // contains the substring `q`, add it to the `matches` array
+//                        $.each(strs, function(i, str) {
+//                            if (substrRegex.test(str)) {
+//                                matches.push(str);
+//                            }
+//                        });
+//
+//                        cb(matches);
+//                    };
+//                };
+
+                $('#siteSearch .typeahead').typeahead({
+                        hint: true,
+                        highlight: true,
+                        minLength: 1
+                    },
+                    {
+                        name: 'states',
+                        source: substringMatcher,
+                        templates: {
+//                            suggestion: function (site) {
+//                                return "<p>" + site.name + "</p><p> - " + site.postcode + "</p>"
+//                            },
+                            empty: [
+                                '<div class="empty-message">',
+                                'unable to find any sites that match the current query',
+                                '</div>'
+                            ]
+                        }
+                    });
+            }
 
             function popoulateSiteSelect() {
                 $.get("/sites", function(sites) {
@@ -186,6 +273,7 @@
 
             function populateReportsSelect() {
                 $.get("/reports/all", function(reports) {
+                    console.log("populating reports list")
                     var option = ''
                     for (var i=0; i<reports.length;i++) {
                         option += '<option value="' + reports[i].id + '" text="' + reports[i].id + '">' + reports[i].id + '</option>';

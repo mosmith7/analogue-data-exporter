@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InterlockingRepository extends CrudRepository<Interlocking, Short> {
+
+    Interlocking findInterlockingByNameEquals(String name);
 }
