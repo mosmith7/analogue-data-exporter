@@ -76,8 +76,16 @@
         /*<![CDATA[*/
         $(document).ready(function() {
             populateParameters(/*[[${reportId}]]*/);
-
+            ifCSVExists(/*[[${reportId}]]*/);
         })
+
+        function ifCSVExists(id) {
+            $.get("/reports/raw-analogue-events/generated/" + id, function(exists) {
+                if (exists) {
+                    $("#csvButton").removeAttr("disabled");
+                }
+            })
+        }
 
         function populateParameters(id) {
             $.get("/reports/"+id, function(report) {

@@ -150,9 +150,10 @@
                         <h1>Generated Reports</h1>
                         <table id="reportsTable">
                             <tr>
-                                <th width="20%">ID</th>
-                                <th width="40%">link</th>
-                                <th width = "40%">CSV Generated</th>
+                                <th width="15%">ID</th>
+                                <th width="15%">link</th>
+                                <th width = "35%">Download CSV</th>
+                                <th width = "35%">Generate CSV</th>
                             </tr>
                         </table>
                     </div>
@@ -404,36 +405,73 @@
                     var td1 = document.createElement("td")
                     var td2 = document.createElement("td")
                     var td3 = document.createElement("td")
-                    td1.appendChild(document.createTextNode(reports[i].id))
+                    var td4 = document.createElement("td")
+                    var reportId = reports[i].id;
+                    td1.appendChild(document.createTextNode(reportId))
                     var a = document.createElement("a")
-                    a.setAttribute("href", "/reports/analogue_results?reportId="+reports[i].id)
+                    a.setAttribute("href", "/reports/analogue_results?reportId="+reportId)
                     a.appendChild(document.createTextNode("View report"))
                     td2.appendChild(a)
+                    // Button for whether CSV has already been generated or not
                     var form = document.createElement("form")
-                    form.setAttribute("action", "/reports/raw-analogue-events/csv/"+reports[i].id)
+                    form.setAttribute("action", "/reports/raw-analogue-events/csv/"+reportId)
                     form.setAttribute("method", "GET")
                     if (areGenerated[i]) {
                         var button = document.createElement("button")
-                        button.setAttribute("id", "csvButton")
+                        button.setAttribute("id", "csvButton"+reportId)
                         button.setAttribute("onClick", "submit")
                         button.setAttribute("class", "btn btn-success")
-                        button.appendChild(document.createTextNode("Download CSV"))
+                        button.innerHTML = "Download CSV"
                         form.appendChild(button)
                     } else {
                         var button = document.createElement("button")
-                        button.setAttribute("id", "csvButton")
+                        button.setAttribute("id", "csvButton"+reportId)
                         button.setAttribute("onClick", "submit")
                         button.setAttribute("class", "btn btn-danger")
                         button.setAttribute("disabled", "disabled")
-                        button.appendChild(document.createTextNode("CSV not generated"))
+                        button.innerHTML = "CSV not generated"
                         form.appendChild(button)
                     }
                     td3.appendChild(form)
+                    // Button to generate / regenerate CSV
+                    var form2 = document.createElement("form")
+                    var button = document.createElement("button")
+                    button.setAttribute("id", "generateButton"+reportId)
+                    button.setAttribute("type", "button")
+                    button.setAttribute("onClick", "generateReport("+reportId+")")
+                    button.setAttribute("class", "btn btn-success")
+                    button.innerHTML = "(Re)Generate CSV"
+                    form2.appendChild(button)
+                    td4.appendChild(form2)
+
                     tr.appendChild(td1)
                     tr.appendChild(td2)
                     tr.appendChild(td3)
+                    tr.appendChild(td4)
                     table.appendChild(tr)
                 }
+            }
+
+            function generateReport(id) {
+                $.ajax({
+                    url: "/reports/raw-analogue-events/generate/"+id,
+                    type: "POST",
+                    contentType:"application/json"
+                }).done(function(r) {
+                    alert("Report Generated!")
+                    // When this call returns, the report is generated, so allow user to click button to download csv
+                    var button = $("#csvButton"+id);
+                    button.removeAttr("disabled");
+                    button.removeAttr("class");
+                    button.attr("onClick", "submit");
+                    button.attr("class", "thing");
+                    button.addClass("btn");
+                    button.addClass("btn-success");
+                    button.text('')
+                    button.text("Download CSV")
+                }).error(function(e) {
+                    alert("Epic Fail!" + e)
+                })
             }
 
             function areReportsGenerated(ids) {

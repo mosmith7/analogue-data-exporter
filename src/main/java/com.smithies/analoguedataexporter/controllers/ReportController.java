@@ -87,7 +87,7 @@ public class ReportController {
 
     @GetMapping(path="raw-analogue-events/generated/{id}")
     @ResponseStatus(value= HttpStatus.OK)
-    public boolean isGenerated(@PathVariable("id") Integer reportId, Model model) {
+    public @ResponseBody boolean isGenerated(@PathVariable("id") Integer reportId, Model model) {
         return analogueReportService.reportCSVExists(reportId);
     }
 
