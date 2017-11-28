@@ -116,8 +116,10 @@ public class ReportController {
         RawAnalogueEventsReportParametersVO report = analogueReportService.getReport(reportId);
         model.addAttribute("site", report.getSite().getId());
         model.addAttribute("channel", report.getChannel().getId());
-        model.addAttribute("dateFrom", report.getFrom());
-        model.addAttribute("dateTo", report.getTo());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        model.addAttribute("dateFrom", df.format(new Date(report.getFrom())));
+        model.addAttribute("dateTo", df.format(new Date(report.getTo())));
+
         model.addAttribute("reportId", report.getId());
 
         // Redirect to thymeleaf page

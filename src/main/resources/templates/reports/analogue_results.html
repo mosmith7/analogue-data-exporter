@@ -81,12 +81,12 @@
 
         function populateParameters(id) {
             $.get("/reports/"+id, function(report) {
-                $("#hiddenSite").val(report.site);
-                $("#hiddenChannel").val(report.channel);
+                $("#hiddenSite").val(report.site.id);
+                $("#hiddenChannel").val(report.channel.id);
                 $("#hiddenFrom").val(report.from);
                 $("#hiddenTo").val(report.to);
-                $("#selectedSite").val(report.site);
-                $("#selectedChannel").val(report.channel);
+                $("#selectedSite").val(report.site.id);
+                $("#selectedChannel").val(report.channel.id);
                 $("#selectedFrom").val(report.from);
                 $("#selectedTo").val(report.to);
             })

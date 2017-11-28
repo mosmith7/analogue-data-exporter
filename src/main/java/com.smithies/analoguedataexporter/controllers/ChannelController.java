@@ -7,10 +7,7 @@ import com.smithies.analoguedataexporter.valueobjects.ChannelVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +17,11 @@ public class ChannelController {
 
     @Autowired
     private ChannelRepository repo;
+
+    @GetMapping("/id/{id}")
+    public @ResponseBody ChannelVO getChannelsForSite(@PathVariable("id") Integer id) {
+        return ChannelVOFactory.generateVO(repo.findOne(id));
+    }
 
     @GetMapping("site")
     public void getChannelsForSite(Model model) {
@@ -37,6 +39,13 @@ public class ChannelController {
         // However, if we try to construct JSON out of this to pass back to the client, we will create an infinitely long
         // nested list - which will cause a stack overflow error.
         // Therefore create a VO i.e. a client version of the channel object that avoids this problem
+        return ChannelVOFactory.generateVO(channels);
+    }
+
+    @GetMapping
+    public @ResponseBody List<ChannelVO> getChannelsForSite(@RequestParam("siteId") Short siteId,
+                                                            @RequestParam("channel") String channelName) {
+        List<Channel> channels = repo.findByInterlocking_IdAndNameContains(siteId, channelName);
         return ChannelVOFactory.generateVO(channels);
     }
 }

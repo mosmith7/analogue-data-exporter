@@ -6,10 +6,7 @@ import com.smithies.analoguedataexporter.repositories.InterlockingRepository;
 import com.smithies.analoguedataexporter.valueobjects.InterlockingVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +23,18 @@ public class InterlockingController {
     public @ResponseBody List<InterlockingVO> findAll() {
         List<Interlocking> sites = new ArrayList<>();
         repo.findAll().forEach(sites::add);
+        return InterlockingVOFactory.generateVO(sites);
+    }
+
+    @GetMapping("/id/{id}")
+    public @ResponseBody InterlockingVO findById(@PathVariable("id") Short id) {
+        return InterlockingVOFactory.generateVO(repo.findOne(id));
+    }
+
+    @GetMapping("/search")
+    public @ResponseBody List<InterlockingVO> search(@RequestParam("search") String siteName) {
+        List<Interlocking> sites = new ArrayList<>();
+        repo.findInterlockingByNameStartsWith(siteName).forEach(sites::add);
         return InterlockingVOFactory.generateVO(sites);
     }
 

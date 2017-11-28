@@ -12,4 +12,6 @@ public interface ChannelRepository extends CrudRepository<Channel, Integer> {
     // Spring is clever enough to create this method as long as it is named correctly
     // findBy{field_name}_{id_name}
     List<Channel> findByInterlocking_Id(Short id);
+
+    List<Channel> findByInterlocking_IdAndNameContains(Short id, String name);
 }

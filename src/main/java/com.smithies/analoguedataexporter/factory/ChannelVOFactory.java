@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 public abstract class ChannelVOFactory {
 
     public static ChannelVO generateVO(final Channel channel) {
-        return new ChannelVO(channel.getId(), channel.getName(),
-                InterlockingVOFactory.generateVO(channel.getInterlocking()));
+        return new ChannelVO(channel.getId(), channel.getName());
     }
 
     public static List<ChannelVO> generateVO(List<Channel> channels) {

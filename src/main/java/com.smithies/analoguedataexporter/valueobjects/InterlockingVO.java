@@ -1,21 +1,17 @@
 package com.smithies.analoguedataexporter.valueobjects;
 
-import java.util.List;
-
 public class InterlockingVO {
 
     private Short id;
     private String name;
     private String code;
     private String postcode;
-    private List<String> channels;
 
-    public InterlockingVO(Short id, String name, String code, String postcode, List<String> channels) {
+    public InterlockingVO(Short id, String name, String code, String postcode) {
         this.id = id;
         this.name = name;
         this.code = code;
         this.postcode = postcode;
-        this.channels = channels;
     }
 
     public Short getId() {
@@ -32,9 +28,5 @@ public class InterlockingVO {
 
     public String getPostcode() {
         return postcode;
-    }
-
-    public List<String> getChannels() {
-        return channels;
     }
 }
