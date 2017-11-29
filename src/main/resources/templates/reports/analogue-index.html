@@ -114,13 +114,15 @@
                         <form id="form">
                             <div class="row">
                                 <div class="form-inline" style="display: table">
-                                    <div id="siteSearch" style="display: table-cell" >
+                                    <div id="siteSearch" style="display: table-cell" value="">
                                         <label>Site:</label>
-                                        <input id="site-typeahead" class="typeahead" type="text" placeholder="Search for a site...">
+                                        <input id="site-typeahead" class="typeahead" type="text" placeholder="Search for a site..."
+                                               value = "" name="site">
                                     </div>
-                                    <div id="channelSearch" style="display: table-cell" >
+                                    <div id="channelSearch" style="display: table-cell" value="">
                                         <label>Channel:</label>
-                                        <input id="channel-typeahead" class="typeahead" disabled="disabled" type="text" placeholder="Search for a channel...">
+                                        <input id="channel-typeahead" class="typeahead" disabled="disabled" type="text"
+                                               placeholder="Search for a channel..." value = "" name="channel">
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +138,7 @@
                                 <div class="form-inline">
                                     <!--<button th:onclick="'javascript:submitParameters(\'' + ${site} +'\',\''+-->
                                     <!--${channel}+'\',\''+${from}+'\',\''+${to} + '\');'" type="button" class="btn btn-success">Confirm Parameters</button>-->
-                                    <button onclick="submitParameters()" type="button" class="btn btn-success">Confirm Parameters</button>
+                                    <button id="submitParametersButton" onclick="submitParameters()" type="button" class="btn btn-success">Confirm Parameters</button>
                                     <button type="reset" class="btn btn-primary">Reset From</button>
                                 </div>
                             </div>
@@ -148,6 +150,7 @@
                     <!-- All generated reports on right of page -->
                     <div>
                         <h1>Generated Reports</h1>
+                        <p>All generated csv files will stay in memory for 30 days. You can always regenerated them if needed.git </p>
                         <table id="reportsTable">
                             <tr>
                                 <th width="15%">ID</th>
@@ -176,23 +179,6 @@
         <script th:inline="javascript">
             // Use thymeleaf script inlining (<script th:inline="javascript">) to be able to access model attributes in javascript
             /*<![CDATA[*/
-
-            // Check all fields filled in before submitted the form
-            $("#form").submit(function(event) {
-                if ($("#siteSelect").val()==="") {
-                    event.preventDefault();
-                    alert("Please select a site")
-                } else if ($("#channelSelect").val()==="") {
-                    event.preventDefault();
-                    alert("Please select a channel")
-                } else if ($("#fromSelect").val()==="") {
-                    event.preventDefault();
-                    alert("Please select a date from value")
-                } else if ($("#toSelect").val()==="") {
-                    event.preventDefault();
-                    alert("Please select a date to value")
-                }
-            })
 
             // If model attributes exist in memory, populate the values on page load
             $(document).ready(function() {
@@ -239,7 +225,8 @@
                     highlight: true,
                     minLength: 2
                 }, {
-                    name: 'sites',
+                    valueKey: 'id',
+                    name: 'site',
                     display: 'name',
                     source: sites,
                     templates: {
@@ -259,6 +246,7 @@
                         typeaheadChannelSearch(siteId)
                         $("#channel-typeahead").prop("disabled", false)
                     }
+                    document.getElementById("siteSearch").value = siteId
                 });
             }
 
@@ -278,7 +266,7 @@
                     highlight: true,
                     minLength: 2
                 }, {
-                    name: 'channels',
+                    name: 'channel',
                     display: 'name',
                     source: channels,
                     templates: {
@@ -286,7 +274,9 @@
                             '<div class="empty-message">No Channels Found</div>'
                         ]
                     }
-                })
+                }).on('typeahead:selected', function (e, channel) {
+                    document.getElementById("channelSearch").value = channel.id
+                });
             }
 
             function popoulateSiteSearch(siteId) {
@@ -295,6 +285,7 @@
                     $('#siteSearch .typeahead').typeahead('val', site.name)
                     $("#channel-typeahead").prop("disabled", false)
                     typeaheadChannelSearch(siteId)
+                    document.getElementById("siteSearch").value = siteId
                 })
             }
 
@@ -302,6 +293,7 @@
                 $.get("/channels/id/"+channelId, function(channel) {
                     console.log("Getting channel by id: " + channelId)
                     $('#channelSearch .typeahead').typeahead('val', channel.name)
+                    document.getElementById("channelSearch").value = channelId
                 })
             }
 
@@ -351,10 +343,9 @@
             }
 
             function submitParameters() {
-                var siteSelect = document.getElementById("siteSelect");
-                var siteId = siteSelect.options[siteSelect.selectedIndex].value
-                var channelSelect = document.getElementById("channelSelect");
-                var channelId = channelSelect.options[channelSelect.selectedIndex].value
+                if (!checkParameters()) return;
+                var siteId = document.getElementById("siteSearch").value
+                var channelId = document.getElementById("channelSearch").value
                 console.log("site: " + siteId + ", channel: " + channelId )
                 var dateFrom = document.getElementById("fromSelect").value
                 var dateTo = document.getElementById("toSelect").value
@@ -378,6 +369,25 @@
                         }
                     }
                 })
+            }
+
+            // Check all fields filled in before submitted the form
+            function checkParameters() {
+                console.log()
+                if (document.getElementById("siteSearch").value==null) {
+                    alert("Please select a site")
+                    return false;
+                } else if (document.getElementById("channelSearch").value==null) {
+                    alert("Please select a channel")
+                    return false;
+                } else if ($("#fromSelect").val()==="") {
+                    alert("Please select a date from value")
+                    return false;
+                } else if ($("#toSelect").val()==="") {
+                    alert("Please select a date to value")
+                    return false;
+                }
+                return true;
             }
 
             function populateReportsTable() {
@@ -458,7 +468,7 @@
                     type: "POST",
                     contentType:"application/json"
                 }).done(function(r) {
-                    alert("Report Generated!")
+                    alert("CSV file Generated!")
                     // When this call returns, the report is generated, so allow user to click button to download csv
                     var button = $("#csvButton"+id);
                     button.removeAttr("disabled");

@@ -1,5 +1,6 @@
 package com.smithies.analoguedataexporter.services;
 
+import com.smithies.analoguedataexporter.entities.AnalogueReportParameters;
 import com.smithies.analoguedataexporter.valueobjects.RawAnalogueEventsReportParametersVO;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,4 +21,6 @@ public interface IAnalogueReportService {
     List<RawAnalogueEventsReportParametersVO> getReports();
 
     RawAnalogueEventsReportParametersVO getReport(Integer id);
+
+    void deleteCSVFile(AnalogueReportParameters parameters);
 }

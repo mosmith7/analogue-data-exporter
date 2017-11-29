@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -161,6 +163,15 @@ class AnalogueReportService implements IAnalogueReportService {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void deleteCSVFile(AnalogueReportParameters parameters) {
+        try {
+            Files.deleteIfExists(Paths.get(parametersToFilename(parameters)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String parametersToFilename(AnalogueReportParameters parameters) {

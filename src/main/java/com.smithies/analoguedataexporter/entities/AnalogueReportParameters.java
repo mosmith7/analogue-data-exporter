@@ -24,6 +24,9 @@ public class AnalogueReportParameters {
     @Column
     private long dateTo;
 
+    @Column
+    private long dateCreated;
+
     public AnalogueReportParameters() {
     }
 
@@ -32,6 +35,15 @@ public class AnalogueReportParameters {
         this.channel = channel;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
+        this.dateCreated = System.currentTimeMillis();
+    }
+
+    public AnalogueReportParameters(Interlocking interlocking, Channel channel, long dateFrom, long dateTo, long dateCreated) {
+        this.interlocking = interlocking;
+        this.channel = channel;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+        this.dateCreated = dateCreated;
     }
 
     public Integer getId() {
@@ -52,5 +64,9 @@ public class AnalogueReportParameters {
 
     public long getDateTo() {
         return dateTo;
+    }
+
+    public long getDateCreated() {
+        return dateCreated;
     }
 }

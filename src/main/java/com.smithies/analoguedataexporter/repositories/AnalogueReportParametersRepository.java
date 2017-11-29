@@ -4,6 +4,7 @@ import com.smithies.analoguedataexporter.entities.AnalogueReportParameters;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,4 +14,6 @@ public interface AnalogueReportParametersRepository extends CrudRepository<Analo
 
     // TODO: Find all reports saved to user
 //    List<AnalogueReportParameters> findByUser_Id(Short id);
+
+    List<AnalogueReportParameters> findByDateCreatedBefore(long date);
 }
