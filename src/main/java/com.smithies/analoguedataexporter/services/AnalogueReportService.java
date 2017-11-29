@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -144,14 +147,15 @@ class AnalogueReportService implements IAnalogueReportService {
             CSVWriter writer = new CSVWriter(fileWriter);
 
             // Writer header
-            writer.writeNext(new String[]{"Site", "Channel", "Date (UTC)", "Value"});
+            writer.writeNext(new String[]{"Site", "Channel", "Date (UTC)", "Date (Human Readable)", "Value"});
 
             // Get a stream from the repository and write the streamed data into a file. To avoid bringing lots of data into memory
+            Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             try (Stream<AnalogueEvent> events = analogueRepository.findByChannel_IdAndDateBetween(parameters.getChannel().getId(),
                     parameters.getDateFrom(), parameters.getDateTo())) {
                 events.forEach(e -> {
                     writer.writeNext(new String[]{parameters.getInterlocking().getName(), e.getChannel().getName(),
-                            String.valueOf(e.getDate()), String.valueOf(e.getValue())});
+                            String.valueOf(e.getDate()), format.format(new Date(e.getDate())), String.valueOf(e.getValue())});
                 });
             }
 
