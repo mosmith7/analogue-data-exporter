@@ -150,13 +150,15 @@
                     <!-- All generated reports on right of page -->
                     <div>
                         <h1>Generated Reports</h1>
-                        <p>All generated csv files will stay in memory for 30 days. You can always regenerated them if needed.git </p>
+                        <p class="row">All generated csv files will stay in memory for 30 days.</p>
+                        <p class="row"> You can always regenerated them if needed.git </p>
                         <table id="reportsTable">
                             <tr>
                                 <th width="15%">ID</th>
                                 <th width="15%">link</th>
-                                <th width = "35%">Download CSV</th>
-                                <th width = "35%">Generate CSV</th>
+                                <th width = "30%">Download CSV</th>
+                                <th width = "30%">Generate CSV</th>
+                                <th width = "10%"></th>
                             </tr>
                         </table>
                     </div>
@@ -297,40 +299,6 @@
                 })
             }
 
-//            function popoulateSiteSelect() {
-//                $.get("/sites", function(sites) {
-//                    var option = ''
-//                    option += '<option value="" selected="selected">--Select a Site--</option>'
-//                    for (var i=0; i<sites.length;i++) {
-//                        option += '<option value="' + sites[i].id + '" text="' + sites[i].name + '">' + sites[i].name + '</option>';
-//                    }
-//                    $("#siteSelect").find('option').remove().end().append(option);
-//                })
-//            }
-//
-//            function populateChannelSelect(siteId) {
-//                $.get("/channels/site/"+siteId, function(channels) {
-//                    var option = ''
-//                    // Create an empty option and have it selected by default
-//                    for (var i=0; i<channels.length;i++) {
-//                        option += '<option value="' + channels[i].id + '" text="' + channels[i].name + '">' + channels[i].name + '</option>';
-//                    }
-//                    $("#channelSelect").find('option').remove().end().append(option);
-//                })
-//            }
-//
-//            function populateChannelSelectAndSelected(siteId, channel) {
-//                $.get("/channels/site/"+siteId, function(channels) {
-//                    var option = ''
-//                    for (var i=0; i<channels.length;i++) {
-//                        option += '<option value="' + channels[i].id + '" text="' + channels[i].name + '">' + channels[i].name + '</option>';
-//                    }
-//                    $("#channelSelect").find('option').remove().end().append(option);
-//                    // Now, still within the asynchronous callback, select the channel that was selected
-//                    $("#channelSelect").val(channel)
-//                })
-//            }
-
             function populateReportsSelect() {
                 $.get("/reports/all", function(reports) {
                     console.log("populating reports list")
@@ -416,6 +384,7 @@
                     var td2 = document.createElement("td")
                     var td3 = document.createElement("td")
                     var td4 = document.createElement("td")
+                    var td5 = document.createElement("td")
                     var reportId = reports[i].id;
                     td1.appendChild(document.createTextNode(reportId))
                     var a = document.createElement("a")
@@ -453,16 +422,24 @@
                     button.innerHTML = "(Re)Generate CSV"
                     form2.appendChild(button)
                     td4.appendChild(form2)
-
+                    // Loading spinner that is disabled unless csv is being generated
+                    var loader = document.createElement("div")
+                    loader.setAttribute("id", "loader"+reportId)
+                    loader.setAttribute("class", "")
+                    td5.appendChild(loader)
+                    // Add row to table
                     tr.appendChild(td1)
                     tr.appendChild(td2)
                     tr.appendChild(td3)
                     tr.appendChild(td4)
+                    tr.appendChild(td5)
                     table.appendChild(tr)
                 }
             }
 
             function generateReport(id) {
+                var loader = document.getElementById("loader"+id)
+                loader.classList.add("loader")
                 $.ajax({
                     url: "/reports/raw-analogue-events/generate/"+id,
                     type: "POST",
@@ -479,6 +456,7 @@
                     button.addClass("btn-success");
                     button.text('')
                     button.text("Download CSV")
+                    loader.classList.remove("loader")
                 }).error(function(e) {
                     alert("Epic Fail!" + e)
                 })
