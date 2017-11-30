@@ -4,6 +4,7 @@ import {Report} from './report';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {of} from "rxjs/observable/of";
 import {catchError} from "rxjs/operators";
+import {pipe} from "rxjs/Rx";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -15,15 +16,25 @@ export class ReportsService {
   constructor(
     private http: HttpClient) { }
 
-  private url = 'http://localhost:8090/reports';  // URL to web api
+  // private url = 'http://localhost:8090/reports';  // URL to web api
+
+  private reportsUrl = 'api/reports';  // URL to web api
 
   /** GET reports from the server */
   getReports (): Observable<Report[]> {
     console.log('Code is about to retrieve reports')
-    return this.http.get<Report[]>(this.url + '/all');
-    // .pipe(
-    //   catchError(this.handleError<Report[]>('getReports', []))
-    // );
+    return this.http.get<Report[]>(this.reportsUrl)
+    .pipe(
+      catchError(this.handleError<Report[]>('getReports', []))
+    );
+  }
+
+  /** GET report by id. Will 404 if id not found */
+  getReport(id: number): Observable<Report> {
+    const url = `${this.reportsUrl}/${id}`;
+    return this.http.get<Report>(url).pipe(
+      catchError(this.handleError<Report>(`getReport id=${id}`))
+    );
   }
 
   private handleError<T> (operation = 'operation', result?: T) {

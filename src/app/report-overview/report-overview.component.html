@@ -4,7 +4,7 @@
   <h1>Generated Reports</h1>
   <p class="row">All generated csv files will stay in memory for 30 days.</p>
   <p class="row"> You can always regenerated them if needed.git </p>
-  <table id="reportsTable">
+  <table id="reportsTable" class="reports">
     <tr>
       <th width="15%">ID</th>
       <th width="15%">link</th>
@@ -12,13 +12,11 @@
       <th width = "30%">Generate CSV</th>
       <th width = "10%"></th>
     </tr>
+    <tr *ngFor="let report of reports">
+      <td>{{report.id}} </td>
+      <td> <a routerLink="/reports/{{report.id}}"><span>View Report</span></a> </td>
+      <td> {{report.site.name}}</td>
+      <td> {{report.site.name}}</td>
+    </tr>
   </table>
 </div>
-
-<ul class="reports">
-  <li *ngFor="let report of reports">
-    <a>
-      <span class="badge">{{report.id}}</span> {{report.name}}
-    </a>
-  </li>
-</ul>
