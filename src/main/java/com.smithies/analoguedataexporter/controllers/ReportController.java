@@ -34,11 +34,25 @@ public class ReportController {
     }
 
     @GetMapping(path="raw-analogue-events")
-    public String getRawAnalogueEvents(Model model)
+    public String getOverview(Model model)
     {
         model.addAttribute("sites", siteRepo.findAll());
         return "reports/analogue-index";
     }
+
+    @GetMapping(path="overview/angular")
+    public String getOverviewAngular(Model model)
+    {
+      model.addAttribute("sites", siteRepo.findAll());
+      return "angular/report-overview";
+    }
+
+  @GetMapping(path="overview/angular/2")
+  public String getOverviewAngular2(Model model)
+  {
+    model.addAttribute("sites", siteRepo.findAll());
+    return "angular/index";
+  }
 
     @PostMapping(path="raw-analogue-events")
     public String preFillParameters(@ModelAttribute("site") Short site, @ModelAttribute("channel") Integer channel,

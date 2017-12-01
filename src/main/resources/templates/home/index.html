@@ -26,6 +26,14 @@
             <input type="submit" id="goToReports" value="Analogue Reports!"> </input>
         </form>
 
+        <form action="#" th:action="@{'/reports/overview/angular'}" th:method="GET" >
+          <input type="submit" id="goToAngularReports" value="Analogue Reports using Angular!"> </input>
+        </form>
+
+        <form action="#" th:action="@{'/reports/overview/angular/2'}" th:method="GET" >
+          <input type="submit" id="goToAngular2Reports" value="Analogue Reports using Angular version 2!"> </input>
+        </form>
+
         <form action="#" th:action="@{'/analogue-events'}" th:method="GET" >
             <input type="submit" id="goToEvents" value="View Example Events!"> </input>
         </form>

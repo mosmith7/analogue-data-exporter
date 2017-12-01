@@ -1,0 +1,267 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      th:lang-xmllang="en">
+
+    <head>
+        <div th:replace = "common/head :: head (title='Raw Analogue Events')"> </div>
+        <script type = "text/javascript"
+                src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+      <script data-require="ui-bootstrap@0.5.0" data-semver="0.5.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+
+        <!--<script type = "text/javascript" th:href="@{/js/typeahead.bundle.min.js}"></script>-->
+        <!--<link rel="stylesheet" type="text/css" th:href="@{/css/jquery.typeahead.min.css}">-->
+        <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+
+        <!-- Import jQuery last otherwise it can complain -->
+        <!--<script type = "text/javascript"-->
+                <!--src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>-->
+        <style>
+
+
+            .typeahead,
+            .tt-query,
+            .tt-hint {
+                width: 200px;
+                height: 25px;
+                padding: 8px 12px;
+                font-size: 14px;
+                line-height: 25px;
+                border: 2px solid #ccc;
+                -webkit-border-radius: 8px;
+                -moz-border-radius: 8px;
+                border-radius: 8px;
+                outline: none;
+            }
+
+            .typeahead {
+                background-color: #fff;
+            }
+
+            .typeahead:focus {
+                border: 2px solid #0097cf;
+            }
+
+            .tt-query {
+                -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+                -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            }
+
+            .tt-hint {
+                color: #999
+            }
+
+            .tt-menu {
+                width: 200px;
+                margin: 12px 0;
+                padding: 8px 0;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                -webkit-border-radius: 8px;
+                -moz-border-radius: 8px;
+                border-radius: 8px;
+                -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+                -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+                box-shadow: 0 5px 10px rgba(0,0,0,.2);
+            }
+
+            .tt-suggestion {
+                padding: 3px 20px;
+                font-size: 14px;
+                line-height: 24px;
+            }
+
+            .tt-suggestion:hover {
+                cursor: pointer;
+                color: #fff;
+                background-color: #0097cf;
+            }
+
+            .tt-suggestion.tt-cursor {
+                color: #fff;
+                background-color: #0097cf;
+
+            }
+
+            .tt-suggestion p {
+                margin: 0;
+            }
+
+            .gist {
+                font-size: 14px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+    <div class="container" ng-app="analogueReports" ng-controller="parametersController">
+      <div class="row">
+        <div class="col-md-12 col-lg-4">
+          <div>
+            <h1>Select parameters</h1>
+            <form id="form">
+              <div class="row">
+                <div class="form-inline" style="display: table">
+                  <label for= "siteSelect2" >Site:</label>
+                  <select name="sites" id="siteSelect2" ng-model="site">
+                    <option ng-repeat="site in sites" value="{{site.id}}">{{site.name}}</option>
+                  </select>
+
+                  <label for= "siteSelect" >Site:</label>
+                  <input id="siteSelect" type="text" placeholder="Select a site" ng-change="onSiteSelect()" ng-model="site" typeahead="site for site in sites" class="form-control">
+
+
+                  <label for="channelSelect">Channel:</label>
+                  <input id="channelSelect" type="text" placeholder="Select a channel" ng-change="onChannelSelect()" ng-model="channel" uib-typeahead="channel for channel in channels">
+
+                  <!--<div id="siteSearch" style="display: table-cell" value="">-->
+                    <!--<label>Site:</label>-->
+                    <!--<input id="site-typeahead" class="typeahead" type="text" placeholder="Search for a site..."-->
+                           <!--value = "" ng-model = "site">-->
+                  <!--</div>-->
+                  <!--<div id="channelSearch" style="display: table-cell" value="">-->
+                    <!--<label>Channel:</label>-->
+                    <!--<input id="channel-typeahead" class="typeahead" disabled="disabled" type="text"-->
+                           <!--placeholder="Search for a channel..." value = "" ng-model="channel">-->
+                  <!--</div>-->
+                </div>
+              </div>
+              <div class = "row">
+                <div class="form-inline">
+                  <label>From:</label>
+                  <input id="fromSelect" type="date" value = "" ng-model="from">
+                  <label>To:</label>
+                  <input  id="toSelect" type="date" value = "" ng-model="to">
+                </div>
+              </div>
+              <div class = "row">
+                <div class="form-inline">
+                  <!--<button th:onclick="'javascript:submitParameters(\'' + ${site} +'\',\''+-->
+                  <!--${channel}+'\',\''+${from}+'\',\''+${to} + '\');'" type="button" class="btn btn-success">Confirm Parameters</button>-->
+                  <button id="submitParametersButton" ng-click="submitParameters()" type="button" class="btn btn-success">Confirm Parameters</button>
+                  <button type="reset" class="btn btn-primary">Reset From</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class = "col-md-12 col-lg-8 col-lg-push-4">
+          <!-- All generated reports on right of page -->
+          <div>
+            <h1>Generated Reports</h1>
+            <p class="row">All generated csv files will stay in memory for 30 days.</p>
+            <p class="row"> You can always regenerated them if needed.git </p>
+            <table id="reportsTable">
+              <tr>
+                <th width="15%">ID</th>
+                <th width="15%">link</th>
+                <th width = "30%">Download CSV</th>
+                <th width = "30%">Generate CSV</th>
+                <th width = "10%"></th>
+              </tr>
+              <tr ng-repeat="report in reports">
+                <td>{{report.id}} </td>
+                <td> <a routerLink="/reports/{{report.id}}"><span>View Report</span></a> </td>
+                <td>
+                  <span>{{areGenerated[report.id]===true ? "CSV Generated" : "CSV not Generated"}}</span>
+                  <!--When trying to use form I get this error: https://docs.angularjs.org/error/$interpolate/noconcat?p0=%2Freports%2Fraw-analogue-events%2Fcsv%2F%7B%7Breport.id%7D%7D-->
+                  <!--<span ng-show="!isCSVGenerated(report)">CSV not Generated</span>-->
+                  <!--<form action="/reports/raw-analogue-events/csv/{{report.id}}" method="GET">-->
+                    <!--<button class= "btn btn-danger"-->
+                            <!--type="submit">{{areGenerated[report.id]===true ? "Download CSV" : "CSV not Generated"}}</button>-->
+                  <!--</form>-->
+                </td>
+                <td> {{report.site.name}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!--<div class="row">-->
+      <!--<div class="col-md-12">-->
+      <!--Bottom section-->
+      <!--</div>-->
+      <!--</div>-->
+
+    </div>
+
+    <script>
+
+      var app = angular.module('analogueReports', ["ui.bootstrap"]);
+
+      app.factory('siteService', function($http) {
+
+        var getSites = function() {
+          return $http.get('/sites').then(function (response) {
+            return response.data;
+          });
+        };
+
+        return {
+          getSites:getSites
+        }
+
+      });
+
+      app.controller('parametersController', function($scope, $http, siteService) {
+
+//        $scope.sites = sitesService($http);
+
+//        $scope.channels = channelsService($http, 1);
+
+        siteService.getSites().then(function(data) {
+          $scope.sites = data
+        });
+
+
+//        $scope.channels = $http({
+//          method: "GET",
+//          url: '/channels?channel=%QUERY&siteId='+siteId,
+//        })
+
+        $scope.reports = [];
+        $scope.areGenerated = []
+        $http.get("/reports/all").then(function (reports) {
+          $scope.reports = reports;
+          var ids = [];
+          for (var i=0; i < reports.length; i++) {
+            ids[i] = reports[i].id;
+          }
+            $http.post('/reports/raw-analogue-events/generated', ids).then(function (areGenerated) {
+              for (var i=0; i < reports.length; i++) {
+                $scope.areGenerated[i] = areGenerated[i];
+              }
+            }, function (error) {
+              console.log("Error retrieving whether csv report was generated");
+            });
+        }, function (error) {
+          console.log("Error retrieving reports");
+        });
+
+
+        $scope.isCSVGenerated = function (report) {
+          console.log("report: " + report);
+          var id = report.id
+          console.log("CSV for id " + id + " generated: " + $scope.areGenerated[id]);
+          return $scope.areGenerated[id];
+        }
+
+        $scope.submitParameters = function() {
+          console.log("Parameters selected: Site: " + $scope.site + ", Channel: "+ $scope.channel+", from: "+$scope.from+", to: "+$scope.to);
+        }
+
+      });
+
+    </script>
+
+    </body>
+
+</html>
