@@ -1,0 +1,379 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:lang-xmllang="en">
+
+<section id="breadcrumbs" >
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Reports Overview (Pre Angular)</li>
+    </ol>
+</section>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-lg-4">
+            <div>
+                <h1>Select parameters</h1>
+                <form id="form">
+                    <div class="row">
+                        <div class="form-inline" style="display: table">
+                            <div id="siteSearch" style="display: table-cell" value="">
+                                <label>Site:</label>
+                                <input id="site-typeahead" class="typeahead" type="text" placeholder="Search for a site..."
+                                       value = "" name="site">
+                            </div>
+                            <div id="channelSearch" style="display: table-cell" value="">
+                                <label>Channel:</label>
+                                <input id="channel-typeahead" class="typeahead" disabled="disabled" type="text"
+                                       placeholder="Search for a channel..." value = "" name="channel">
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class="form-inline">
+                            <label>From:</label>
+                            <input id="fromSelect" type="date" value = "" name="from">
+                            <label>To:</label>
+                            <input  id="toSelect" type="date" value = "" name="to">
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class="form-inline">
+                            <!--<button th:onclick="'javascript:submitParameters(\'' + ${site} +'\',\''+-->
+                            <!--${channel}+'\',\''+${from}+'\',\''+${to} + '\');'" type="button" class="btn btn-success">Confirm Parameters</button>-->
+                            <button id="submitParametersButton" onclick="submitParameters()" type="button" class="btn btn-success">Confirm Parameters</button>
+                            <button type="reset" class="btn btn-primary">Reset From</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class = "col-md-12 col-lg-8 col-lg-push-4">
+            <!-- All generated reports on right of page -->
+            <div>
+                <h1>Generated Reports</h1>
+                <p class="row">All generated csv files will stay in memory for 30 days.</p>
+                <p class="row"> You can always regenerated them if needed.git </p>
+                <table id="reportsTable">
+                    <tr>
+                        <th width="15%">ID</th>
+                        <th width="15%">link</th>
+                        <th width = "30%">Download CSV</th>
+                        <th width = "30%">Generate CSV</th>
+                        <th width = "10%"></th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!--<div class="row">-->
+    <!--<div class="col-md-12">-->
+    <!--Bottom section-->
+    <!--</div>-->
+    <!--</div>-->
+
+</div>
+
+<script th:inline="javascript">
+    // Use thymeleaf script inlining (<script th:inline="javascript">) to be able to access model attributes in javascript
+    /*<![CDATA[*/
+
+    // If model attributes exist in memory, populate the values on page load
+    $(document).ready(function() {
+        var siteSearch = /[&?]site=([^&]+)/.exec(location.search)
+        var site = siteSearch == null ? "" : siteSearch[1]
+        var channelSearch = /[&?]channel=([^&]+)/.exec(location.search)
+        var channel = channelSearch == null ? "" : channelSearch[1]
+        var fromSearch = /[&?]from=([^&]+)/.exec(location.search)
+        var from = fromSearch == null ? "" : fromSearch[1]
+        var toSearch = /[&?]to=([^&]+)/.exec(location.search)
+        var to = toSearch == null ? "" : toSearch[1]
+        typeaheadSiteSearch()
+        if (site != "") {
+            popoulateSiteSearch(site)
+            if (channel !="") {
+                populateChannelSearch(channel)
+            }
+        }
+        if (from != "") {
+            document.querySelector('#fromSelect').value = new Date(parseInt(from)).toISOString().substring(0,10)
+        }
+        if (to != "") {
+            document.querySelector('#toSelect').value = new Date(parseInt(to)).toISOString().substring(0,10)
+        }
+
+        populateReportsSelect()
+
+        populateReportsTable()
+
+    })
+
+    function typeaheadSiteSearch() {
+        var sites = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '/sites/search?search=%QUERY',
+                wildcard: '%QUERY',
+            }
+        });
+
+        $('#siteSearch .typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 2
+        }, {
+            valueKey: 'id',
+            name: 'site',
+            display: 'name',
+            source: sites,
+            templates: {
+//                            suggestion: function (site) {
+//                                return "<p>" + site.name + "</p><p> - " + site.postcode + "</p>"
+//                            },
+                empty: [
+                    '<div class="empty-message">No Sites Found</div>'
+                ]
+            }
+        }).on('typeahead:selected', function (e, site) {
+            var siteId = site.id
+            console.log("Site ID selected: "+siteId)
+            if (siteId===""){
+//                        $("#channelSelect").find('option').remove().end();
+            } else {
+                typeaheadChannelSearch(siteId)
+                $("#channel-typeahead").prop("disabled", false)
+            }
+            document.getElementById("siteSearch").value = siteId
+        });
+    }
+
+    function typeaheadChannelSearch(siteId) {
+        console.log("Channel typeahead code entered")
+        var channels = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '/channels?channel=%QUERY&siteId='+siteId,
+                wildcard: '%QUERY',
+            }
+        });
+
+        $('#channelSearch .typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 2
+        }, {
+            name: 'channel',
+            display: 'name',
+            source: channels,
+            templates: {
+                empty: [
+                    '<div class="empty-message">No Channels Found</div>'
+                ]
+            }
+        }).on('typeahead:selected', function (e, channel) {
+            document.getElementById("channelSearch").value = channel.id
+        });
+    }
+
+    function popoulateSiteSearch(siteId) {
+        $.get("/sites/id/"+siteId, function(site) {
+            console.log("Getting site by id: " + siteId)
+            $('#siteSearch .typeahead').typeahead('val', site.name)
+            $("#channel-typeahead").prop("disabled", false)
+            typeaheadChannelSearch(siteId)
+            document.getElementById("siteSearch").value = siteId
+        })
+    }
+
+    function populateChannelSearch(channelId) {
+        $.get("/channels/id/"+channelId, function(channel) {
+            console.log("Getting channel by id: " + channelId)
+            $('#channelSearch .typeahead').typeahead('val', channel.name)
+            document.getElementById("channelSearch").value = channelId
+        })
+    }
+
+    function populateReportsSelect() {
+        $.get("/reports/all", function(reports) {
+            console.log("populating reports list")
+            var option = ''
+            for (var i=0; i<reports.length;i++) {
+                option += '<option value="' + reports[i].id + '" text="' + reports[i].id + '">' + reports[i].id + '</option>';
+            }
+            $("#reportSelect").find('option').remove().end().append(option);
+        })
+    }
+
+    function submitParameters() {
+        if (!checkParameters()) return;
+        var siteId = document.getElementById("siteSearch").value
+        var channelId = document.getElementById("channelSearch").value
+        console.log("site: " + siteId + ", channel: " + channelId )
+        var dateFrom = document.getElementById("fromSelect").value
+        var dateTo = document.getElementById("toSelect").value
+        console.log("from: " + dateFrom + ", to: " + dateTo)
+        return $.ajax({
+            url: "/reports/raw-analogue-events/parameters",
+            type: "POST",
+            contentType:"application/json",
+            data: JSON.stringify({
+                siteId: siteId,
+                channelId: channelId,
+                from: dateFrom,
+                to: dateTo
+            }),
+            success: function(r) {
+                window.location.href = "raw-analogue-events/parameters/" + r
+            },
+            statusCode: {
+                500: function(){
+                    alert("No data was found for the parameters selected")
+                }
+            }
+        })
+    }
+
+    // Check all fields filled in before submitted the form
+    function checkParameters() {
+        console.log()
+        if (document.getElementById("siteSearch").value==null) {
+            alert("Please select a site")
+            return false;
+        } else if (document.getElementById("channelSearch").value==null) {
+            alert("Please select a channel")
+            return false;
+        } else if ($("#fromSelect").val()==="") {
+            alert("Please select a date from value")
+            return false;
+        } else if ($("#toSelect").val()==="") {
+            alert("Please select a date to value")
+            return false;
+        }
+        return true;
+    }
+
+    function populateReportsTable() {
+        $.get("/reports/all", function(reports) {
+            var ids = reports.map(function(report) {
+                return report.id
+            })
+            $.ajax({
+                url: "/reports/raw-analogue-events/generated",
+                type: "POST",
+                contentType:"application/json",
+                data: JSON.stringify(ids),
+                success: function(data) {
+                    fillInTable(reports, data)
+                }
+            })
+        })
+    }
+
+    fillInTable = function(reports, areGenerated) {
+        console.log(areGenerated)
+        var table = document.getElementById("reportsTable")
+        for (var i=0; i<reports.length;i++) {
+            var tr = document.createElement("tr")
+            var td1 = document.createElement("td")
+            var td2 = document.createElement("td")
+            var td3 = document.createElement("td")
+            var td4 = document.createElement("td")
+            var td5 = document.createElement("td")
+            var reportId = reports[i].id;
+            td1.appendChild(document.createTextNode(reportId))
+            var a = document.createElement("a")
+            a.setAttribute("href", "/reports/analogue_results?reportId="+reportId)
+            a.appendChild(document.createTextNode("View report"))
+            td2.appendChild(a)
+            // Button for whether CSV has already been generated or not
+            var form = document.createElement("form")
+            form.setAttribute("action", "/reports/raw-analogue-events/csv/"+reportId)
+            form.setAttribute("method", "GET")
+            if (areGenerated[i]) {
+                var button = document.createElement("button")
+                button.setAttribute("id", "csvButton"+reportId)
+                button.setAttribute("onClick", "submit")
+                button.setAttribute("class", "btn btn-success")
+                button.innerHTML = "Download CSV"
+                form.appendChild(button)
+            } else {
+                var button = document.createElement("button")
+                button.setAttribute("id", "csvButton"+reportId)
+                button.setAttribute("onClick", "submit")
+                button.setAttribute("class", "btn btn-danger")
+                button.setAttribute("disabled", "disabled")
+                button.innerHTML = "CSV not generated"
+                form.appendChild(button)
+            }
+            td3.appendChild(form)
+            // Button to generate / regenerate CSV
+            var form2 = document.createElement("form")
+            var button = document.createElement("button")
+            button.setAttribute("id", "generateButton"+reportId)
+            button.setAttribute("type", "button")
+            button.setAttribute("onClick", "generateReport("+reportId+")")
+            button.setAttribute("class", "btn btn-success")
+            button.innerHTML = "(Re)Generate CSV"
+            form2.appendChild(button)
+            td4.appendChild(form2)
+            // Loading spinner that is disabled unless csv is being generated
+            var loader = document.createElement("div")
+            loader.setAttribute("id", "loader"+reportId)
+            loader.setAttribute("class", "")
+            td5.appendChild(loader)
+            // Add row to table
+            tr.appendChild(td1)
+            tr.appendChild(td2)
+            tr.appendChild(td3)
+            tr.appendChild(td4)
+            tr.appendChild(td5)
+            table.appendChild(tr)
+        }
+    }
+
+    function generateReport(id) {
+        var loader = document.getElementById("loader"+id)
+        loader.classList.add("loader")
+        $.ajax({
+            url: "/reports/raw-analogue-events/generate/"+id,
+            type: "POST",
+            contentType:"application/json"
+        }).done(function(r) {
+            alert("CSV file Generated!")
+            // When this call returns, the report is generated, so allow user to click button to download csv
+            var button = $("#csvButton"+id);
+            button.removeAttr("disabled");
+            button.removeAttr("class");
+            button.attr("onClick", "submit");
+            button.attr("class", "thing");
+            button.addClass("btn");
+            button.addClass("btn-success");
+            button.text('')
+            button.text("Download CSV")
+            loader.classList.remove("loader")
+        }).error(function(e) {
+            alert("Epic Fail!" + e)
+        })
+    }
+
+    function areReportsGenerated(ids) {
+        return $.ajax({
+            url: "/reports/raw-analogue-events/generated",
+            type: "POST",
+            contentType:"application/json",
+            data: ids
+        }).done(function(r) {
+            return r
+        }).error(function(e) {
+            alert("Epic Fail!" + e)
+        })
+    }
+    /*]]>*/
+</script>
+
+
+</html>

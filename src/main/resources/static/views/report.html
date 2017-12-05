@@ -1,0 +1,45 @@
+<section id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">
+            <a href="#!/reports">Reports</a>
+        </li>
+        <li class="breadcrumb-item">Report {{ctrl.reportId}}</li>
+    </ol>
+</section>
+
+<div class = "container">
+    <div class = "row">
+        <div class="col-md-3 col-md-offset-3 col-xs-3 form-group">
+            <button type="button" ng-click="ctrl.editParameters()" class="btn btn-success">Edit Parameters</button>
+        </div>
+    </div>
+    <div class="row">
+        <p class="col-md-3 col-md-offset-2">Selected Site:</p><p id="selectedSite" class="col-md-3 col-md-offset-6" >{{ctrl.siteId}}</p>
+        <p class="col-md-3 col-md-offset-2">Selected Channel:</p><p id="selectedChannel" class="col-md-3 col-md-offset-6" >{{ctrl.channelId}}</p>
+        <p class="col-md-3 col-md-offset-2">Selected From:</p><p id="selectedFrom" class="col-md-3 col-md-offset-6">{{ctrl.from}}</p>
+        <p class="col-md-3 col-md-offset-2">Selected To:</p><p id="selectedTo" class="col-md-3 col-md-offset-6">{{ctrl.to}}</p>
+    </div>
+
+    <div class = "row">
+        <div class="col">
+            <form>
+                <input type="hidden" value="{{ctrl.reportId}}">
+                <div class="col">
+                    <button ng-click="ctrl.generateReport()" class="btn btn-success">Generate Report</button>
+                </div>
+                <div id="{{'loader'+ctrl.reportId}}" class="loader" ng-show="ctrl.report.csvGenerating"></div>
+            </form>
+        </div>
+    </div>
+
+    <div class = "row">
+        <p>Once the report is ready you can export the data to CSV</p>
+        <div class="col">
+            <form action="{{'/reports/csv/'+ctrl.reportId}}" method="GET">
+                <button id="csvButton" ng-disabled="!ctrl.report.csvGenerated" type="submit" class="btn btn-success">Export CSV</button>
+            </form>
+        </div>
+    </div>
+
+</div>

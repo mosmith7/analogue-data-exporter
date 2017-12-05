@@ -1,0 +1,106 @@
+<!--<script type = "text/javascript" src = "../js/reports.js"></script>-->
+
+<section id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#!/">Home</a></li>
+        <li class="breadcrumb-item active">Reports Overview</li>
+    </ol>
+</section>
+
+<div class="container">
+    <p></p>
+    <div class="row">
+        <div class="col-md-12 col-lg-4">
+            <div>
+                <h1>Select parameters</h1>
+                <form id="form">
+                    <div class="row">
+                        <div class="form-inline" style="display: table">
+                            <label for= "siteSelect" >Site:</label>
+                            <select name="sites" id="siteSelect" ng-model="ctrl.siteId" ng-change="ctrl.onSiteSelect()">
+                                <option ng-repeat="site in ctrl.sites" value="{{site.id}}">{{site.name}}</option>
+                            </select>
+
+                            <label for= "channelSelect" >Channel:</label>
+                            <select name="channels" id="channelSelect" ng-model="ctrl.channelId" ng-change="ctrl.onChannelSelect()">
+                                <option ng-repeat="channel in ctrl.channels" value="{{channel.id}}">{{channel.name}}</option>
+                            </select>
+
+                            <!--<div id="siteSearch" style="display: table-cell" value="">-->
+                            <!--<label for= "siteSelect" >Site:</label>-->
+                            <!--<input id="siteSelect" type="text" placeholder="Select a site" ng-change="onSiteSelect()" ng-model="site" typeahead="site for site in sites" class="form-control">-->
+                            <!--</div>-->
+
+                            <!--<div id="channelSearch" style="display: table-cell" value="">-->
+                            <!--<label for="channelSelect">Channel:</label>-->
+                            <!--<input id="channelSelect" type="text" placeholder="Select a channel" ng-change="onChannelSelect()" ng-model="channel" uib-typeahead="channel for channel in channels">-->
+                            <!--</div>-->
+
+                            <!--<div id="siteSearch" style="display: table-cell" value="">-->
+                            <!--<label>Site:</label>-->
+                            <!--<input id="site-typeahead" class="typeahead" type="text" placeholder="Search for a site..."-->
+                            <!--value = "" ng-model = "site">-->
+                            <!--</div>-->
+                            <!--<div id="channelSearch" style="display: table-cell" value="">-->
+                            <!--<label>Channel:</label>-->
+                            <!--<input id="channel-typeahead" class="typeahead" disabled="disabled" type="text"-->
+                            <!--placeholder="Search for a channel..." value = "" ng-model="channel">-->
+                            <!--</div>-->
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class="form-inline">
+                            <label>From:</label>
+                            <input id="fromSelect" type="date" value = "" name="from" ng-model="ctrl.from" ng-change="ctrl.onDateFromSelect()">
+                            <label>To:</label>
+                            <input  id="toSelect" type="date" value = "" name="to" ng-model="ctrl.to" ng-change="ctrl.onDateToSelect()">
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class="form-inline">
+                            <button id="submitParametersButton" ng-click="ctrl.submitParameters()" type="button" class="btn btn-success">Confirm Parameters</button>
+                            <button type="reset" class="btn btn-primary">Reset From</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class = "col-md-12 col-lg-8 col-lg-push-4">
+            <!-- All generated reports on right of page -->
+            <div>
+                <h1>Generated Reports</h1>
+                <p class="row">All generated csv files will stay in memory for 30 days.</p>
+                <p class="row"> You can always regenerated them if needed.git </p>
+                <table id="reportsTable">
+                    <tr>
+                        <th width="15%">ID</th>
+                        <th width="15%">link</th>
+                        <th width = "30%">Download CSV</th>
+                        <th width = "30%">Generate CSV</th>
+                        <th width = "10%"></th>
+                    </tr>
+                    <tr ng-repeat="report in ctrl.reports">
+                        <td>{{report.id}} </td>
+                        <td> <a ng-click="ctrl.viewReport(report.id)"><span>View Report</span></a> </td>
+                        <td>
+                            <form action="{{'/reports/csv/' + report.id}}" method="GET">
+                            <button class="{{report.csvGenerated===true ? 'btn btn-success' : 'btn btn-danger' }}"
+                                    ng-disabled="!report.csvGenerated"
+                            type="submit">{{report.csvGenerated===true ? "Download CSV" : "CSV not Generated"}}</button>
+                            </form>
+                        </td>
+                        <td>
+                            <button class="btn btn-success" ng-click="ctrl.generateCSV(report.id)">
+                                {{report.csvGenerated===true ? "Regenerate CSV" : "Generate CSV"}}</button>
+                        </td>
+                        <td>
+                            <div id="{{'loader'+report.id}}" class="loader" ng-show="report.csvGenerating"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

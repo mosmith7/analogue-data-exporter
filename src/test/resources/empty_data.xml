@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-    <!-- These are run in reverse order by dbunit, so can keep them same order as we set them up -->
-    <interlocking />
-    <channel />
-    <event_analogue />
-</dataset>

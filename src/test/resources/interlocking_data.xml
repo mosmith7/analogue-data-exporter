@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<dataset>
-    <interlocking id="1" code="DBY" name="Derby" postcode="DE72" />
-    <interlocking id="2" code="DBY" name="Derby" postcode="DE72" />
-    <interlocking id="3" code="BIR" name="Birmingham" postcode="BI00" />
-    <interlocking id="4" code="BIR" name="Birmingham" postcode="BI00" />
-</dataset>

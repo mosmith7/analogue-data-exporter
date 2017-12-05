@@ -1,0 +1,24 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      th:lang-xmllang="en"
+      ng-app="angular-reports">
+
+<head>
+    <div th:replace = "head"> </div>
+</head>
+
+<div>
+
+<!-- Uncomment if using $stateProvider in app.ts -->
+<!--<div ui-view="header"></div>-->
+<!--<div ui-view="content"></div>-->
+<!--<div ui-view="footer"></div>-->
+
+<!-- Uncomment if using $routeProvider in app.ts -->
+<header th:replace = "header :: header"></header>
+<div ng-view/></div>
+<footer th:replace = "footer"></footer>
+
+</body>
+</html>
